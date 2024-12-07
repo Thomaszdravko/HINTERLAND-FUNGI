@@ -329,7 +329,7 @@
         <img src="34081462-D813-4C36-AF92-E871D2793E3A.jpeg" alt="Tour Photo 9" class="grid-image" onclick="showModal('34081462-D813-4C36-AF92-E871D2793E3A.jpeg', 'Native oyster mushroom (Pleurotus djamor complex)')">
     </div>
     <div class="photo-grid-landscape">
-        <img src="DB149263-EC2F-411E-83E0-84406C10227B.jpeg" alt="Tour Photo 10" class="grid-landscape">
+        <img src="DB149263-EC2F-411E-83E0-84406C10227B.jpeg" alt="Tour Photo 10" class="grid-landscape" onclick="showModal('DB149263-EC2F-411E-83E0-84406C10227B.jpeg', 'Mucilaginous purple webcaps (Cortinarius sp.)')">
     </div>
 </div>
 
@@ -354,10 +354,11 @@
 
     .grid-landscape {
         width: 100%;
-        max-width: 300px; /* Ensures the landscape photo is smaller */
+        max-width: 600px; /* Optional: limit the width for larger screens */
         height: auto;
         border-radius: 10px;
         transition: transform 0.2s ease;
+        cursor: pointer;
     }
 
     /* General Photo Styling */
@@ -433,14 +434,36 @@
     }
 </style>
 
+<script>
+    function showModal(imageSrc, captionText) {
+        var modal = document.getElementById('modal');
+        var modalImg = document.getElementById('modal-img');
+        var caption = document.getElementById('modal-caption');
+
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+        caption.textContent = captionText;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+</script>
+
+
 
 
 
 
 <div id="bio" class="section">
     <h2 class="title">Bio</h2>
-    <p>Thomas Zdravko is a fungi expert and educator based in the Gold Coast Hinterland. Passionate about building public awareness of fungi and their important role in the ecosystem, Thomas specializes in the identification and taxonomy of native Australian fungi, as well as foraging for edible species.</p>
-    <p>Thomas is the founder and moderator of the largest fungi identification Facebook group in Australia, with over 49,000 members. Through his work, he provides invaluable guidance and support to fungi enthusiasts across the country. In addition to his expertise in mycology, Thomas is a qualified and experienced teacher, committed to fostering curiosity and understanding about the natural world.</p>
+    <p>Thomas Zdravko is a fungi expert and educator based in the Gold Coast Hinterland. Passionate about building public awareness of fungi and their important role in the ecosystem, Thomas specialises in the identification and taxonomy of native Australian fungi, as well as foraging for edible species.</p>
+    <p>
+        Thomas is the founder and moderator of 
+        <a href="https://www.facebook.com/groups/AustraliaNZFungusID" target="_blank" style="color: #ffa726; text-decoration: none;">Australia & New Zealand Fungus Identification</a> - 
+        the largest fungi identification Facebook group in Australia, with over 49,000 members.
+    </p>
     <div class="photo-grid-bio">
         <img src="816103E9-CE9F-429A-B45C-71D62A76BCFB.jpeg" alt="Bio Photo 1" class="landscape" onclick="showModal('816103E9-CE9F-429A-B45C-71D62A76BCFB.jpeg', 'Shaggy ink caps (Coprinus comatus complex)')">
         <img src="F8241D45-C141-4C87-8262-9AE60511D5C1.jpeg" alt="Bio Photo 2" class="portrait" onclick="showModal('F8241D45-C141-4C87-8262-9AE60511D5C1.jpeg', 'Australian chicken of the woods (Laetiporus versisporus)')">
@@ -551,6 +574,59 @@
 </script>
 
 
+<script>
+    function showModal(imageSrc, captionText) {
+        var modal = document.getElementById('modal');
+        var modalImg = document.getElementById('modal-img');
+        var caption = document.getElementById('modal-caption');
+
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+        caption.textContent = captionText;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+</script>
+
+
+<script>
+    function showModal(imageSrc, captionText) {
+        var modal = document.getElementById('modal');
+        var modalImg = document.getElementById('modal-img');
+        var caption = document.getElementById('modal-caption');
+
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+        caption.textContent = captionText;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+</script>
+
+<script>
+    function showModal(imageSrc, captionText) {
+        var modal = document.getElementById('modal');
+        var modalImg = document.getElementById('modal-img');
+        var caption = document.getElementById('modal-caption');
+
+        modal.style.display = 'block';
+        modalImg.src = imageSrc;
+        caption.textContent = captionText;
+    }
+
+    function closeModal() {
+        var modal = document.getElementById('modal');
+        modal.style.display = 'none';
+    }
+</script>
+
+
 
 <footer>
     <p>Email: <a href="mailto:hinterlandfungi@gmail.com">hinterlandfungi@gmail.com</a></p>
@@ -578,7 +654,7 @@
     <div class="modal-content">
         <span class="close" onclick="closeTermsModal()">&times;</span>
         <div class="logo-container">
-            <img src="logo-image.png" alt="Hinterland Fungi Logo">
+            <img src="FD5763CA-59D0-4837-82D9-A031284055AB.png" alt="Hinterland Fungi Logo">
         </div>
         <h2 style="text-align: center;">Terms & Conditions</h2>
         <p>By purchasing a ticket you agree to receive information about the event by email from the event organiser.</p>

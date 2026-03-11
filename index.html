@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hinterland Fungi Tours</title>
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="favicon.png">
     <style>
         :root {
             --accent: #d89b3c;
@@ -16,6 +16,7 @@
             --shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
             --radius: 12px;
             --content-width: 820px;
+            --desktop-header-width: 1180px;
         }
 
         * {
@@ -246,14 +247,14 @@
 
         .photo-grid-tour {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
             max-width: var(--content-width);
             margin: 0 auto;
         }
 
         .photo-grid-landscape {
-            margin-top: 10px;
+            margin-top: 12px;
             display: flex;
             justify-content: center;
             max-width: var(--content-width);
@@ -273,6 +274,10 @@
 
         .grid-landscape {
             max-width: 600px;
+        }
+
+        .photo-grid-landscape .grid-image {
+            max-width: 520px;
         }
 
         .grid-image:hover,
@@ -412,6 +417,18 @@
             text-decoration: none;
         }
 
+        @media only screen and (min-width: 769px) {
+            header img {
+                width: min(100%, var(--desktop-header-width));
+            }
+
+            .nav-container {
+                max-width: var(--desktop-header-width);
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
         @media only screen and (max-width: 768px) {
             .container,
             .ticket-section,
@@ -439,6 +456,7 @@
 
             .photo-grid-tour {
                 grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
             }
 
             .photo-grid-bio {
@@ -483,7 +501,8 @@
                 gap: 8px;
             }
 
-            .photo-grid-landscape .grid-landscape {
+            .photo-grid-landscape .grid-landscape,
+            .photo-grid-landscape .grid-image {
                 max-width: 100%;
             }
 

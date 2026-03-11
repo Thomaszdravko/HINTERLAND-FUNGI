@@ -16,6 +16,7 @@
             --shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
             --radius: 12px;
             --content-width: 820px;
+            --header-stack-height: 210px;
         }
 
         * {
@@ -36,9 +37,21 @@
             color: var(--text-dark);
         }
 
+        .top-stack {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+        }
+
         header {
             width: 100%;
             background: #000;
+            position: sticky;
+            top: 0;
+            z-index: 201;
+            margin-bottom: 0;
+            padding-bottom: 0;
+            line-height: 0;
         }
 
         header img {
@@ -54,12 +67,13 @@
             align-items: center;
             gap: 18px;
             background: rgba(0, 0, 0, 0.95);
-            padding: 12px 16px;
+            padding: 6px 16px 10px;
+            margin-top: -2px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
             color: var(--accent);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 202;
         }
 
         .nav-container a {
@@ -229,6 +243,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 10px;
+            text-align: left;
         }
 
         .mushroom-bullet-list img {
@@ -445,10 +460,56 @@
             .nav-container {
                 flex-wrap: wrap;
                 gap: 12px;
+                padding: 4px 12px 8px;
+            }
+
+            .text-column p {
+                text-align: justify;
+                text-justify: inter-word;
+            }
+
+            .mushroom-bullet-list,
+            .mushroom-bullet-list li {
+                text-align: left;
             }
         }
 
         @media only screen and (max-width: 520px) {
+            :root {
+                --header-stack-height: 170px;
+            }
+
+            body {
+                padding-top: var(--header-stack-height);
+            }
+
+            .top-stack {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                z-index: 300;
+            }
+
+            header {
+                position: relative;
+                top: 0;
+                z-index: 301;
+            }
+
+            .nav-container {
+                position: relative;
+                top: 0;
+                z-index: 302;
+                gap: 10px;
+                padding: 2px 10px 8px;
+                margin-top: -4px;
+            }
+
+            .nav-container a {
+                font-size: 0.88em;
+            }
+
             .photo-grid-tour {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
@@ -466,27 +527,30 @@
                 max-width: 100%;
             }
 
-            .nav-container {
-                gap: 10px;
+            .social-container {
+                margin-top: 14px;
             }
 
-            .nav-container a {
-                font-size: 0.88em;
+            .text-column p {
+                text-align: justify;
+                text-justify: inter-word;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <img src="SIX_5A9EDC19-61E8-472C-9A96-188AA94AA3C9.jpeg" alt="Hinterland Fungi">
-    </header>
+    <div class="top-stack">
+        <header>
+            <img src="SIX_CB0239AA-1F52-408A-B5BE-29D9FF1C0400.png" alt="Hinterland Fungi">
+        </header>
 
-    <div class="nav-container">
-        <img src="F75D430B-EB12-44A6-9617-3EE1E6AD31CD.png" alt="Mushroom Icon">
-        <a href="#sessions">Tickets</a>
-        <a href="#tour-info">Info</a>
-        <a href="#bio">Bio</a>
-        <img src="F75D430B-EB12-44A6-9617-3EE1E6AD31CD.png" alt="Mushroom Icon">
+        <div class="nav-container">
+            <img src="F75D430B-EB12-44A6-9617-3EE1E6AD31CD.png" alt="Mushroom Icon">
+            <a href="#sessions">Tickets</a>
+            <a href="#tour-info">Info</a>
+            <a href="#bio">Bio</a>
+            <img src="F75D430B-EB12-44A6-9617-3EE1E6AD31CD.png" alt="Mushroom Icon">
+        </div>
     </div>
 
     <div class="social-container">
@@ -555,7 +619,6 @@
         <div class="photo-grid-tour">
             <img src="62AFC512-9314-4ABE-80D4-B1D37F465035.jpeg" alt="Tour Photo 1" class="grid-image" onclick="showModal('62AFC512-9314-4ABE-80D4-B1D37F465035.jpeg', 'Northern rhubarb bolete (Boletellus sp.)')">
             <img src="C5762FFD-D598-4279-A5E2-D7B9A4A2C438.jpeg" alt="Tour Photo 2" class="grid-image" onclick="showModal('C5762FFD-D598-4279-A5E2-D7B9A4A2C438.jpeg', 'Wine cap mushroom (Stropharia rugosoannulata)')">
-            <img src="304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg" alt="Tour Photo 3" class="grid-image" onclick="showModal('304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg', 'Smooth chanterelles (Cantharellus sp.)')">
             <img src="91DB864A-9EA0-4ADA-90B8-DEA77715689B.jpeg" alt="Tour Photo 4" class="grid-image" onclick="showModal('91DB864A-9EA0-4ADA-90B8-DEA77715689B.jpeg', '')">
             <img src="8AEFC516-B94F-4843-8F1F-10CD5ED7E22F.jpeg" alt="Tour Photo 5" class="grid-image" onclick="showModal('8AEFC516-B94F-4843-8F1F-10CD5ED7E22F.jpeg', 'Fly agaric (Amanita muscaria) growing locally with Pinus elliottii')">
             <img src="6B1DB415-ED7E-4E83-BB32-AB429A1825ED.jpeg" alt="Tour Photo 6" class="grid-image" onclick="showModal('6B1DB415-ED7E-4E83-BB32-AB429A1825ED.jpeg', 'Upright pink coral (Ramaria samuelsii)')">
@@ -566,6 +629,8 @@
 
         <div class="photo-grid-landscape">
             <img src="DB149263-EC2F-411E-83E0-84406C10227B.jpeg" alt="Tour Photo 10" class="grid-landscape" onclick="showModal('DB149263-EC2F-411E-83E0-84406C10227B.jpeg', 'Mucilaginous purple webcaps (Cortinarius sp.)')">
+				</div>
+        <div class="photo-grid-landscape">				<img src="304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg" alt="Tour Photo 3" class="grid-image" onclick="showModal('304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg', 'Smooth chanterelles (Cantharellus sp.)')">
         </div>
     </div>
 

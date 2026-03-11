@@ -16,7 +16,6 @@
             --shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
             --radius: 12px;
             --content-width: 820px;
-            --header-stack-height: 128px;
         }
 
         * {
@@ -40,17 +39,12 @@
         .top-stack {
             position: sticky;
             top: 0;
-            z-index: 200;
+            z-index: 300;
         }
 
         header {
             width: 100%;
             background: #000;
-            position: sticky;
-            top: 0;
-            z-index: 201;
-            margin-bottom: 0;
-            padding-bottom: 0;
             line-height: 0;
         }
 
@@ -67,13 +61,10 @@
             align-items: center;
             gap: 18px;
             background: rgba(0, 0, 0, 0.95);
-            padding: 6px 16px 10px;
-            margin-top: -2px;
+            padding: 3px 16px 8px;
+            margin-top: 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
             color: var(--accent);
-            position: sticky;
-            top: 0;
-            z-index: 202;
         }
 
         .nav-container a {
@@ -126,7 +117,7 @@
 
         .social-container {
             text-align: center;
-            margin: 18px 0;
+            margin: 14px 0;
         }
 
         .social-container a {
@@ -460,7 +451,7 @@
             .nav-container {
                 flex-wrap: wrap;
                 gap: 12px;
-                padding: 4px 12px 8px;
+                padding: 2px 12px 8px;
             }
 
             .text-column p {
@@ -475,31 +466,9 @@
         }
 
         @media only screen and (max-width: 520px) {
-            body {
-                padding-top: var(--header-stack-height);
-            }
-
-            .top-stack {
-                position: fixed;
-                top: 0;
-                left: 0;
-                right: 0;
-                z-index: 300;
-            }
-
-            header {
-                position: relative;
-                top: 0;
-                z-index: 301;
-            }
-
             .nav-container {
-                position: relative;
-                top: 0;
-                z-index: 302;
                 gap: 10px;
-                padding: 2px 10px 8px;
-                margin-top: -4px;
+                padding: 0 10px 7px;
             }
 
             .nav-container a {
@@ -524,7 +493,7 @@
             }
 
             .social-container {
-                margin-top: 8px;
+                margin-top: 10px;
                 margin-bottom: 14px;
             }
 
@@ -577,6 +546,7 @@
 
         <div class="poster">
             <img src="SIX_39B7344C-C6BF-406F-B805-C2A14A013181.jpeg" alt="Tour Poster">
+				
         </div>
 
         <h2 class="title" style="margin-top: 20px;">Gift Certificates</h2>
@@ -590,6 +560,8 @@
                 <img src="697E8DA5-970F-466A-B0FC-AA2B83667B71.jpeg" alt="Gift Certificate" class="rect-image">
             </a>
             <a href="https://www.trybooking.com/events/giftcertificate/216785" class="ticket-button">Buy Now</a>
+						<p>
+						</p>
         </div>
     </div>
 
@@ -616,7 +588,6 @@
         <div class="photo-grid-tour">
             <img src="62AFC512-9314-4ABE-80D4-B1D37F465035.jpeg" alt="Tour Photo 1" class="grid-image" onclick="showModal('62AFC512-9314-4ABE-80D4-B1D37F465035.jpeg', 'Northern rhubarb bolete (Boletellus sp.)')">
             <img src="C5762FFD-D598-4279-A5E2-D7B9A4A2C438.jpeg" alt="Tour Photo 2" class="grid-image" onclick="showModal('C5762FFD-D598-4279-A5E2-D7B9A4A2C438.jpeg', 'Wine cap mushroom (Stropharia rugosoannulata)')">
-            <img src="304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg" alt="Tour Photo 3" class="grid-image" onclick="showModal('304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg', 'Smooth chanterelles (Cantharellus sp.)')">
             <img src="91DB864A-9EA0-4ADA-90B8-DEA77715689B.jpeg" alt="Tour Photo 4" class="grid-image" onclick="showModal('91DB864A-9EA0-4ADA-90B8-DEA77715689B.jpeg', '')">
             <img src="8AEFC516-B94F-4843-8F1F-10CD5ED7E22F.jpeg" alt="Tour Photo 5" class="grid-image" onclick="showModal('8AEFC516-B94F-4843-8F1F-10CD5ED7E22F.jpeg', 'Fly agaric (Amanita muscaria) growing locally with Pinus elliottii')">
             <img src="6B1DB415-ED7E-4E83-BB32-AB429A1825ED.jpeg" alt="Tour Photo 6" class="grid-image" onclick="showModal('6B1DB415-ED7E-4E83-BB32-AB429A1825ED.jpeg', 'Upright pink coral (Ramaria samuelsii)')">
@@ -628,6 +599,8 @@
         <div class="photo-grid-landscape">
             <img src="DB149263-EC2F-411E-83E0-84406C10227B.jpeg" alt="Tour Photo 10" class="grid-landscape" onclick="showModal('DB149263-EC2F-411E-83E0-84406C10227B.jpeg', 'Mucilaginous purple webcaps (Cortinarius sp.)')">
         </div>
+				<div class="photo-grid-landscape">
+				     <img src="304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg" alt="Tour Photo 3" class="grid-image" onclick="showModal('304E233C-8E6E-4F4C-9C77-E32C6EC333D2.jpeg', 'Smooth chanterelles (Cantharellus sp.)')">
     </div>
 
     <div id="bio" class="section">

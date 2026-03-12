@@ -3,7 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Mushroom Documentation Tool</title>
+<title>Fungi Field Notes</title>
+
+<link rel="icon" type="image/png" href="favicon.png" />
+<link rel="shortcut icon" href="favicon.png" />
+<link rel="apple-touch-icon" href="favicon.png" />
 
 <style>
   :root{
@@ -12,19 +16,27 @@
     --panel2: rgba(30,30,30,0.88);
     --text: #F2F2F2;
     --muted: #B9B9B9;
-    --accent: #B9C8A0;      /* pastel light olive green */
+    --accent: #B9C8A0;
     --accent2:#9EAF86;
     --border: rgba(255,255,255,0.14);
+    --danger:#A76969;
+    --desktop-header-width: 1180px;
   }
 
   * { box-sizing: border-box; }
+
+  html{
+    margin:0;
+    padding:0;
+  }
 
   body{
     margin:0;
     min-height:100vh;
     font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     color: var(--text);
-    background: url("background.jpeg") center/cover no-repeat fixed;
+    background: url("0027015A-CFA3-4237-AD58-B7418E9B049E.jpeg") no-repeat center center fixed;
+    background-size: cover;
   }
   body::before{
     content:"";
@@ -33,31 +45,51 @@
     z-index:-1;
   }
 
-  .wrap{
+  .top-stack{
+    position: sticky;
+    top: 0;
+    z-index: 300;
+    margin: 0;
+    padding: 0;
+  }
+
+  .app-header{
+    width: 100%;
+    background: #000;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+  }
+
+  .app-header img{
+    display: block;
+    width: 100%;
+    height: auto;
+    margin: 0 auto;
+  }
+
+  @media only screen and (min-width: 769px){
+    .app-header img{
+      width: min(100%, var(--desktop-header-width));
+    }
+  }
+
+  .sectionBar{
+    width: 100%;
+    background: rgba(0,0,0,0.96);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+    margin: 0;
+    padding: 0;
+  }
+
+  .sectionBarInner{
     width:min(980px, 94vw);
-    margin: 18px auto;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px;
-    backdrop-filter: blur(6px);
-  }
-
-  h1{
-    margin: 0 0 8px 0;
-    text-align:center;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    font-size: 18px;
-  }
-
-  .topbar{
+    margin: 0 auto;
+    padding: 10px 0 12px 0;
     display:flex;
     justify-content: space-between;
     align-items:flex-start;
     gap: 12px;
-    margin-top: 6px;
   }
 
   .titleBlock{ flex: 1; min-width: 0; }
@@ -67,12 +99,26 @@
     text-transform: uppercase;
     font-size: 16px;
     line-height: 1.2;
+    letter-spacing: 1px;
   }
   .sectionSubtitle{
     margin-top: 6px;
     color: var(--muted);
     font-size: 13px;
     line-height: 1.25;
+  }
+
+  .wrap{
+    width:min(980px, 94vw);
+    margin: 0 auto 18px auto;
+    background: var(--panel);
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    border-top: none;
+    border-radius: 0 0 16px 16px;
+    padding: 16px 16px 22px 16px;
+    backdrop-filter: blur(6px);
   }
 
   .btn{
@@ -93,6 +139,8 @@
   .btn.secondary:hover{ background:#3A3A3A; }
   .btn.primary{ background: var(--accent); color: #101010; }
   .btn.primary:hover{ background: var(--accent2); }
+  .btn.danger{ background: var(--danger); color:#fff; }
+  .btn.danger:hover{ filter: brightness(1.05); }
 
   .smallBtn{
     white-space: nowrap;
@@ -105,18 +153,18 @@
     border: 1px solid var(--border);
     border-radius: 14px;
     padding: 12px;
-    margin-top: 12px;
+    margin-top: 4px;
   }
 
   .grid{
     display:grid;
-    grid-template-columns: repeat(3, 1fr); /* 3 per row */
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
     margin-top: 10px;
   }
 
   @media (max-width: 520px){
-    .grid{ grid-template-columns: repeat(2, 1fr); } /* smaller phones */
+    .grid{ grid-template-columns: repeat(2, 1fr); }
   }
 
   .opt{
@@ -154,12 +202,30 @@
     gap: 10px;
     margin-top: 10px;
   }
+
+  .fieldRow > div,
+  .twoCol > div{
+    min-width: 0;
+  }
+
+  .twoCol{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width: 640px){
+    .twoCol{ grid-template-columns: 1fr; }
+  }
+
   label{
     font-size: 12px;
     color: var(--muted);
   }
   input, textarea, select{
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display:block;
     padding: 11px;
     border-radius: 12px;
     border: 1px solid var(--border);
@@ -167,6 +233,15 @@
     color: var(--text);
     outline: none;
     font-size: 14px;
+  }
+
+  input[type="date"]{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+    display:block;
+    appearance: none;
+    -webkit-appearance: none;
   }
 
   textarea{
@@ -192,7 +267,19 @@
     line-height: 1.35;
   }
 
-  /* START SCREEN */
+  .outputActions{
+    display:none;
+    margin-top: 10px;
+  }
+
+  .helperPreview{
+    margin-top: 10px;
+    color: var(--accent);
+    font-weight: 800;
+    font-size: 13px;
+    line-height: 1.25;
+  }
+
   .start{
     position: fixed; inset: 0;
     display:flex;
@@ -200,7 +287,7 @@
     justify-content:center;
     padding: 18px;
     background: rgba(0,0,0,0.70);
-    z-index: 10;
+    z-index: 30;
   }
   .startCard{
     width: min(520px, 92vw);
@@ -214,7 +301,7 @@
     width: min(220px, 64vw);
     height: auto;
     display:block;
-    margin: 6px auto 14px auto;
+    margin: 6px auto 10px auto;
   }
   .startHint{
     color: var(--muted);
@@ -222,7 +309,6 @@
     margin-bottom: 14px;
   }
 
-  /* PALETTE */
   .paletteWrap{
     margin-top: 10px;
   }
@@ -251,7 +337,18 @@
     font-size: 13px;
   }
 
-  /* FORAY LOG MODAL */
+  .gpsRow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .gpsStatus{
+    margin-top: 4px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.25;
+  }
+
   .modal{
     position: fixed; inset: 0;
     display:none;
@@ -315,6 +412,95 @@
     font-size: 12px;
     font-weight: 800;
   }
+
+  .confirmOverlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.72);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 40;
+    padding: 18px;
+  }
+  .confirmCard{
+    width:min(460px, 92vw);
+    background: rgba(24,24,24,0.96);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 18px;
+  }
+  .confirmTitle{
+    margin:0 0 8px 0;
+    color: var(--accent);
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: 0.8px;
+  }
+  .confirmText{
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+
+  .inatBtn{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+  .inatDot{
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: 0.18;
+    position: relative;
+    display:inline-block;
+  }
+  .inatDot::after{
+    content:"i";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    font-size:12px;
+    color: currentColor;
+    opacity: 1;
+  }
+
+  .stickyNavWrap{
+    position: sticky;
+    bottom: 0;
+    z-index: 280;
+    margin-top: 14px;
+    padding-top: 14px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, rgba(0,0,0,0.96) 0%, rgba(0,0,0,0.90) 64%, rgba(0,0,0,0) 100%);
+  }
+
+  .appFooter{
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    gap: 14px;
+    margin-top: 18px;
+    padding-top: 10px;
+    font-size: 12px;
+    color: var(--accent);
+    flex-wrap: wrap;
+  }
+
+  .appFooter a{
+    color: var(--accent);
+    text-decoration: underline;
+  }
+
+  .appFooter a:hover{
+    opacity: 0.9;
+  }
 </style>
 </head>
 
@@ -323,12 +509,22 @@
 <div class="start" id="start">
   <div class="startCard">
     <img src="logo.png" alt="Logo" />
-    <div class="startHint">Document a fungus observation step-by-step. Works best on mobile.</div>
+    <div class="startHint">Document a fungus observation step-by-step.</div>
     <button class="btn primary" onclick="begin()">Begin</button>
   </div>
 </div>
 
-<!-- FORAY LOG MODAL -->
+<div class="confirmOverlay" id="confirmOverlay">
+  <div class="confirmCard">
+    <h3 class="confirmTitle" id="confirmTitle">Confirm</h3>
+    <div class="confirmText" id="confirmText">Are you sure?</div>
+    <div class="btnRow">
+      <button class="btn secondary" onclick="closeConfirm(false)">Cancel</button>
+      <button class="btn danger" onclick="closeConfirm(true)">Start Again</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal" id="forayModal">
   <div class="modalCard">
     <div class="modalHead">
@@ -345,35 +541,55 @@
   </div>
 </div>
 
-<div class="wrap">
-  <h1>Mushroom Documentation Tool</h1>
+<div class="top-stack">
+  <header class="app-header">
+    <img src="SIX_F4B5FB21-A3A5-4712-B100-3BEF873C9D7E.png" alt="Hinterland Fungi banner">
+  </header>
 
-  <div class="topbar">
-    <div class="titleBlock">
-      <h2 class="sectionTitle" id="sectionTitle">Loading…</h2>
-      <div class="sectionSubtitle" id="sectionSubtitle"></div>
+  <div class="sectionBar">
+    <div class="sectionBarInner">
+      <div class="titleBlock">
+        <h2 class="sectionTitle" id="sectionTitle">Loading…</h2>
+        <div class="sectionSubtitle" id="sectionSubtitle"></div>
+      </div>
+      <button class="btn secondary smallBtn" id="skipBtn" onclick="skipSection()">Skip</button>
     </div>
-    <button class="btn secondary smallBtn" id="skipBtn" onclick="skipSection()">Skip</button>
   </div>
+</div>
 
+<div class="wrap">
   <div class="card" id="content"></div>
 
   <div class="notesLabel">Additional notes</div>
   <textarea id="notes" placeholder="Additional notes"></textarea>
 
-  <div class="btnRow">
-    <button class="btn secondary" id="prevBtn" onclick="prevSection()">Previous</button>
-    <button class="btn primary" id="nextBtn" onclick="nextSection()">Next</button>
-  </div>
-
   <div id="output"></div>
+
+  <div class="outputActions" id="outputActions">
+    <button class="btn primary inatBtn" onclick="copyAndOpenINat()">
+      <span class="inatDot" aria-hidden="true"></span>
+      <span>Copy to Clipboard and Open iNaturalist</span>
+    </button>
+  </div>
 
   <div class="btnRow" id="finalBtns" style="display:none;">
     <button class="btn primary" onclick="generateListDescription()">Generate List Description</button>
     <button class="btn primary" onclick="generateWrittenDescription()">Generate Written Description</button>
     <button class="btn primary" onclick="saveToForayLog()">Save to Foray Log</button>
     <button class="btn primary" onclick="openForayLog()">View Foray Log</button>
-    <button class="btn primary" onclick="copyAndOpenINat()">Copy & Open iNaturalist</button>
+    <button class="btn secondary" onclick="startAgain()">Start Again</button>
+  </div>
+
+  <div class="stickyNavWrap" id="navSticky">
+    <div class="btnRow" style="margin-top:0;">
+      <button class="btn secondary" id="prevBtn" onclick="prevSection()">Previous</button>
+      <button class="btn primary" id="nextBtn" onclick="nextSection()">Next</button>
+    </div>
+  </div>
+
+  <div class="appFooter">
+    <div>© 2026 Hinterland Fungi. All rights reserved.</div>
+    <div><a href="https://www.hinterlandfungi.com" target="_blank" rel="noopener noreferrer">Back to main page</a></div>
   </div>
 </div>
 
@@ -384,10 +600,11 @@
 
 const state = {
   stepIndex: 0,
-  selections: {},      // key -> array (even for single-select)
-  textInputs: {},      // key -> string or object for measurements/general
-  notes: {},           // key -> string
+  selections: {},
+  textInputs: {},
+  notes: {},
   skipped: new Set(),
+  gpsStatus: "",
 };
 
 const isEmpty = (v) => v == null || (typeof v === "string" && v.trim() === "");
@@ -395,7 +612,8 @@ const safeTrim = (v) => (v || "").trim();
 
 const FORAY_STORAGE_KEY = "mushroom_foray_log_v1";
 
-/* Colour palette (kept as you had it) */
+let confirmCallback = null;
+
 const COLOURS = [
   {name:"Crimson", hex:"#7A1123"},
   {name:"Brick red", hex:"#8C2F2B"},
@@ -455,17 +673,16 @@ const FUNGUS_TYPE = [{
   subtitle:"Choose the best match. This sets a type-specific pathway.",
   type:"options",
   options:[
-    {v:"Mushroom (cap + stem)", h:"Agarics, boletes, hydnoid mushrooms (Hydnum), chanterelle-like forms."},
+    {v:"Mushrooms", h:"Cap and stem; gills (agarics), teeth (hydnoid), tubes/pores (boletes)."},
     {v:"Bracket / Polypore", h:"Shelf fungi; often on wood, pores underneath."},
-    {v:"Coral / Club / Icicle", h:"Branched corals, clubs, Hericium-like icicles/spines."},
-    {v:"Puffball / Earthball", h:"Round/pear-shaped; spores inside (peridium/gleba)."},
-    {v:"Stinkhorn / Cage fungus", h:"Often emerges from an “egg”; foul smell; slimy spore mass."},
-    {v:"Cups / Discs / Jellies", h:"Cups/discs or gelatinous blobs/ears."},
-    {v:"Morels & allies", h:"Morels (pitted), Helvella saddles, Gyromitra brain-like."},
+    {v:"Coral / Club / Icicle", h:"Branched, club-shaped, or pendulate forms."},
+    {v:"Puffball / Earthball", h:"Round/pear-shaped; spores inside."},
+    {v:"Stinkhorn / Cage fungus", h:"Often emerges from an egg; foul smell; slimy spore mass."},
+    {v:"Cups / Discs / Jellies", h:"Cup-like, disc-like, or gelatinous fungi."},
+    {v:"Morels & allies", h:"Morels, saddles, brain-like fungi, and allies."},
   ]
 }];
 
-/* Habitat / substrate etc. are universal */
 const UNIVERSAL_ENV = [
   {
     key:"habitat",
@@ -522,7 +739,7 @@ const MUSHROOM_PRE = [
   {
     key:"growth_habit",
     title:"Growth Habit",
-    subtitle:"How fruit bodies are arranged (beginner translation in brackets).",
+    subtitle:"How fruiting bodies are arranged (beginner translation in brackets).",
     type:"options",
     options:[
       {v:"Solitary", h:"(single) One mushroom, spaced from others."},
@@ -535,7 +752,7 @@ const MUSHROOM_PRE = [
   {
     key:"fruit_attachment",
     title:"Fruiting Body Attachment",
-    subtitle:"How the fruit body attaches to the substrate (beginner translation in brackets).",
+    subtitle:"How the fruiting body attaches to the substrate (beginner translation in brackets).",
     type:"options",
     options:[
       {v:"Stipitate", h:"(with stalk) Has a distinct stem."},
@@ -554,7 +771,7 @@ const MUSHROOM_PRE = [
   {
     key:"cap_shape",
     title:"Pileus Shape",
-    subtitle:"Overall cap shape (beginner translation in brackets). Tap to toggle.",
+    subtitle:"Overall cap shape (beginner translation in brackets). Tap to toggle. You can select more than one stage to show how the pileus changes over time.",
     type:"options",
     multi:true,
     options:[
@@ -647,24 +864,23 @@ const MUSHROOM_PRE = [
   },
 ];
 
-/* Lamellae branch */
 const LAM = [
   {
     key:"lam_attach",
     title:"Lamellae Attachment to Stipe",
-    subtitle:"How gills meet the stem (beginner translation in brackets). Tap to toggle.",
+    subtitle:"How gills meet the stipe (beginner translation in brackets). Tap to toggle.",
     type:"options",
     multi:true,
     options:[
-      {v:"Free", h:"(not attached) Gills stop before the stem."},
-      {v:"Adnexed", h:"(narrowly attached) Thin attachment to stem."},
-      {v:"Adnate", h:"(broadly attached) Wide attachment to stem."},
-      {v:"Sinuate", h:"(notched) Notch near stem."},
-      {v:"Decurrent", h:"(running down) Gills run down the stem."},
+      {v:"Free", h:"(not attached) Gills stop before the stipe."},
+      {v:"Adnexed", h:"(narrowly attached) Thin attachment to stipe."},
+      {v:"Adnate", h:"(broadly attached) Wide attachment to stipe."},
+      {v:"Sinuate", h:"(notched) Notch near stipe."},
+      {v:"Decurrent", h:"(running down) Gills run down the stipe."},
       {v:"Subdecurrent", h:"(slightly running down) Run down a short way."},
-      {v:"Collarium", h:"(collar) Gills attached to a ring/collar around stem."},
-      {v:"Depressed", h:"(pressed in) Gills dip near the stem before attaching."},
-      {v:"Remote", h:"(far) Gills end well before the stem."},
+      {v:"Collarium", h:"(collar) Gills attached to a ring/collar around stipe."},
+      {v:"Depressed", h:"(pressed in) Gills dip near the stipe before attaching."},
+      {v:"Remote", h:"(far) Gills end well before the stipe."},
     ]
   },
   {
@@ -713,7 +929,6 @@ const LAM = [
   },
 ];
 
-/* Pores branch (boletes + pores) */
 const POR = [
   { key:"pore_shape", title:"Pores Characteristics (Shape)", subtitle:"Shape of pores seen underneath.", type:"options",
     options:[ {v:"Round",h:"Circular pores."},{v:"Angular",h:"Polygon/angular pores."},{v:"Elongated",h:"Stretched or maze-like pores."} ] },
@@ -729,7 +944,6 @@ const POR = [
     options:[ {v:"Smooth",h:"Even surface."},{v:"Rough",h:"Uneven, ragged, or irregular surface."} ] },
 ];
 
-/* Teeth branch */
 const TEETH = [
   {
     key:"teeth_form",
@@ -748,7 +962,6 @@ const TEETH = [
   { key:"teeth_colour", title:"Teeth Colour", subtitle:"Select colour(s) (tap to toggle).", type:"palette", multi:true },
 ];
 
-/* Ridges/Folds branch (Craterellus/Cantharellus-like) */
 const RIDGES = [
   {
     key:"ridge_desc",
@@ -767,7 +980,6 @@ const RIDGES = [
   { key:"ridge_colour", title:"Ridge Colour", subtitle:"Select colour(s) (tap to toggle).", type:"palette", multi:true },
 ];
 
-/* Mushroom common tail */
 const MUSHROOM_COMMON = [
   {
     key:"spore_print",
@@ -790,12 +1002,12 @@ const MUSHROOM_COMMON = [
       {v:"Other", h:"Use notes to describe."},
     ]
   },
-  { key:"stipe_colour", title:"Stipe Colour", subtitle:"Select one or more colours for the stem (tap to toggle).", type:"palette", multi:true },
-  { key:"stipe_length", title:"Stipe Length", subtitle:"Enter stem length in mm (if present).", type:"measure_mm" },
+  { key:"stipe_colour", title:"Stipe Colour", subtitle:"Select one or more colours for the stipe (tap to toggle).", type:"palette", multi:true },
+  { key:"stipe_length", title:"Stipe Length", subtitle:"Enter stipe length in mm (if present).", type:"measure_mm" },
   {
     key:"stipe_position",
     title:"Stipe Position / Attachment",
-    subtitle:"Where the stem attaches to the cap (beginner translation in brackets).",
+    subtitle:"Where the stipe attaches to the cap (beginner translation in brackets).",
     type:"options",
     options:[
       {v:"Central", h:"(center) Attached at the center."},
@@ -806,15 +1018,15 @@ const MUSHROOM_COMMON = [
   {
     key:"partial_veil",
     title:"Partial Veil",
-    subtitle:"Veil structures on/near the stem. Select the best match.",
+    subtitle:"Veil structures on/near the stipe. Select the best match.",
     type:"options",
     options:[
-      {v:"Cortina", h:"Cobwebby veil strands (often leaves rust on stem)."},
+      {v:"Cortina", h:"Cobwebby veil strands (often leaves rust on stipe)."},
       {v:"Persistent annulus", h:"Ring remains clearly."},
       {v:"Floppy annulus", h:"Ring hangs/flops."},
       {v:"Cogwheel annulus", h:"Toothed/gear-like ring."},
       {v:"Striate annulus", h:"Ring with grooves/lines."},
-      {v:"Remnants only", h:"Fragments on stem/cap edge, no full ring."},
+      {v:"Remnants only", h:"Fragments on stipe/cap edge, no full ring."},
       {v:"None", h:"No veil observed."},
     ]
   },
@@ -913,7 +1125,7 @@ const CORAL = [
     options:[
       {v:"Branched coral", h:"Many branches."},
       {v:"Club", h:"Single or few thick clubs."},
-      {v:"Icicle / hanging spines (Hericium-like)", h:"Hanging teeth/spines from branches."},
+      {v:"Icicle / hanging spines (pendulate)", h:"Hanging teeth/spines from branches."},
       {v:"Fan / rosette", h:"Clustered fan-like growth."},
       {v:"Not sure", h:"Use notes."},
     ]},
@@ -1126,7 +1338,7 @@ function getFlow(){
 
   const type = getSingle("fungus_type");
 
-  if(type === "Mushroom (cap + stem)"){
+  if(type === "Mushrooms"){
     flow.push(...MUSHROOM_PRE);
 
     const hym = getSingle("hymenium_type");
@@ -1183,8 +1395,9 @@ function begin(){
     state.textInputs.general = {
       observer_name:"",
       date:`${yyyy}-${mm}-${dd}`,
+      specimen_number:"",
       location:"",
-      specimen_number:""
+      gps_coordinates:""
     };
   }
   render();
@@ -1214,6 +1427,7 @@ function render(){
   document.getElementById("prevBtn").style.visibility = state.stepIndex === 0 ? "hidden" : "visible";
   document.getElementById("nextBtn").style.display = isLastStep() ? "none" : "inline-block";
   document.getElementById("finalBtns").style.display = isLastStep() ? "flex" : "none";
+  document.getElementById("navSticky").style.display = isLastStep() ? "none" : "block";
 
   document.getElementById("notes").value = state.notes[sec.key] || "";
 
@@ -1266,24 +1480,57 @@ function renderGeneral(){
   const wrapper = document.createElement("div");
   wrapper.className = "fieldRow";
 
-  const g = state.textInputs.general || {observer_name:"", date:"", location:"", specimen_number:""};
+  const g = state.textInputs.general || {
+    observer_name:"",
+    date:"",
+    specimen_number:"",
+    location:"",
+    gps_coordinates:""
+  };
 
   wrapper.appendChild(makeField("Observer's Name", "text", g.observer_name, v => g.observer_name=v));
   wrapper.appendChild(makeField("Date", "date", g.date, v => g.date=v));
-  wrapper.appendChild(makeField("Location", "text", g.location, v => g.location=v));
   wrapper.appendChild(makeField("Specimen Number", "text", g.specimen_number, v => g.specimen_number=v));
+  wrapper.appendChild(makeField("Location", "text", g.location, v => g.location=v));
+  wrapper.appendChild(makeField("GPS Coordinates", "text", g.gps_coordinates, v => g.gps_coordinates=v, "e.g., -28.12345, 153.12345"));
+
+  const gpsBlock = document.createElement("div");
+  const gpsLabel = document.createElement("label");
+  gpsLabel.textContent = "GPS";
+  const gpsRow = document.createElement("div");
+  gpsRow.className = "gpsRow";
+
+  const gpsBtn = document.createElement("button");
+  gpsBtn.className = "btn secondary smallBtn";
+  gpsBtn.textContent = "Use Current GPS";
+  gpsBtn.onclick = (e) => {
+    e.preventDefault();
+    useCurrentGPS();
+  };
+
+  gpsRow.appendChild(gpsBtn);
+  gpsBlock.appendChild(gpsLabel);
+  gpsBlock.appendChild(gpsRow);
+
+  const gpsStatus = document.createElement("div");
+  gpsStatus.className = "gpsStatus";
+  gpsStatus.textContent = state.gpsStatus || "You can enter a written location and optionally add GPS coordinates.";
+  gpsBlock.appendChild(gpsStatus);
+
+  wrapper.appendChild(gpsBlock);
 
   state.textInputs.general = g;
   return wrapper;
 }
 
-function makeField(labelText, type, value, setter){
+function makeField(labelText, type, value, setter, placeholder=""){
   const block = document.createElement("div");
   const label = document.createElement("label");
   label.textContent = labelText;
   const input = document.createElement("input");
   input.type = type;
   input.value = value || "";
+  input.placeholder = placeholder || "";
   input.oninput = () => setter(input.value);
   block.appendChild(label);
   block.appendChild(input);
@@ -1305,6 +1552,7 @@ function renderMeasureMM(key){
 }
 
 function renderOptions(key, options, multi){
+  const wrap = document.createElement("div");
   const grid = document.createElement("div");
   grid.className = "grid";
 
@@ -1342,7 +1590,19 @@ function renderOptions(key, options, multi){
     grid.appendChild(d);
   });
 
-  return grid;
+  wrap.appendChild(grid);
+
+  if(key === "cap_shape"){
+    const preview = formatCapShapePreview();
+    const help = document.createElement("div");
+    help.className = "helperPreview";
+    help.textContent = preview
+      ? `Preview: ${preview}`
+      : "Preview: select one or more stages to see how it will read.";
+    wrap.appendChild(help);
+  }
+
+  return wrap;
 }
 
 function renderPalette(key, multi){
@@ -1463,16 +1723,110 @@ function prevSection(){
   render();
 }
 
+function openConfirm(title, text, cb){
+  confirmCallback = cb;
+  document.getElementById("confirmTitle").textContent = title || "Confirm";
+  document.getElementById("confirmText").textContent = text || "Are you sure?";
+  document.getElementById("confirmOverlay").style.display = "flex";
+}
+
+function closeConfirm(result){
+  document.getElementById("confirmOverlay").style.display = "none";
+  const cb = confirmCallback;
+  confirmCallback = null;
+  if(typeof cb === "function") cb(!!result);
+}
+
+function startAgain(){
+  openConfirm(
+    "Start Again",
+    "Start a new observation? This will clear the current unsaved observation.",
+    (ok) => {
+      if(!ok) return;
+
+      state.stepIndex = 0;
+      state.selections = {};
+      state.textInputs = {};
+      state.notes = {};
+      state.skipped = new Set();
+      state.gpsStatus = "";
+
+      document.getElementById("output").style.display = "none";
+      document.getElementById("output").textContent = "";
+      document.getElementById("outputActions").style.display = "none";
+      document.getElementById("finalBtns").style.display = "none";
+      document.getElementById("notes").value = "";
+      document.getElementById("start").style.display = "flex";
+      render();
+    }
+  );
+}
+
+function useCurrentGPS(){
+  if(!navigator.geolocation){
+    state.gpsStatus = "Geolocation is not supported on this device/browser.";
+    render();
+    return;
+  }
+
+  state.gpsStatus = "Fetching current GPS…";
+  render();
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude.toFixed(6);
+      const lon = position.coords.longitude.toFixed(6);
+
+      if(!state.textInputs.general){
+        state.textInputs.general = {
+          observer_name:"",
+          date:"",
+          specimen_number:"",
+          location:"",
+          gps_coordinates:""
+        };
+      }
+
+      state.textInputs.general.gps_coordinates = `${lat}, ${lon}`;
+      state.gpsStatus = "GPS coordinates added.";
+      render();
+    },
+    (error) => {
+      if(error.code === error.PERMISSION_DENIED){
+        state.gpsStatus = "Location permission denied.";
+      } else if(error.code === error.POSITION_UNAVAILABLE){
+        state.gpsStatus = "Current position unavailable.";
+      } else if(error.code === error.TIMEOUT){
+        state.gpsStatus = "Location request timed out.";
+      } else {
+        state.gpsStatus = "Could not retrieve GPS coordinates.";
+      }
+      render();
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 12000,
+      maximumAge: 0
+    }
+  );
+}
+
 /* =========================
    OUTPUT HELPERS
 ========================= */
 
-function shouldOmitSelection(key, selections){
-  if(state.skipped.has(key)) return true;
-  if(!selections || !selections.length) return true;
-  if(selections.length === 1 && selections[0] === "None") return true;
-  return false;
-}
+const CAP_SHAPE_ORDER = [
+  "Ovoid",
+  "Conical",
+  "Campanulate",
+  "Parabolic",
+  "Cylindric",
+  "Convex",
+  "Pulvinate",
+  "Plane",
+  "Depressed",
+  "Umbonate"
+];
 
 function formatSelection(selections){
   return selections.join("-");
@@ -1482,6 +1836,9 @@ function showOutput(text){
   const box = document.getElementById("output");
   box.style.display = "block";
   box.textContent = text;
+
+  const actions = document.getElementById("outputActions");
+  actions.style.display = safeTrim(text) ? "block" : "none";
 }
 
 function currentOutputOrList(){
@@ -1542,18 +1899,184 @@ function addSentence(arr, text){
   if(s) arr.push(s);
 }
 
-function buildHabitatSentence(){
-  const parts = [];
-  const habitat = lowerSelections("habitat");
-  const substrate = lowerSelections("substrate");
-  const trees = safeTrim(state.textInputs["trees"] || "");
+function sortByOrder(values, order){
+  const orderMap = new Map(order.map((v, i) => [v, i]));
+  return [...values].sort((a, b) => {
+    const ai = orderMap.has(a) ? orderMap.get(a) : 999;
+    const bi = orderMap.has(b) ? orderMap.get(b) : 999;
+    return ai - bi;
+  });
+}
 
-  if(habitat.length) parts.push(`in ${joinHuman(habitat)}`);
+function formatCapShapePreview(){
+  const shapes = getSelections("cap_shape");
+  if(!shapes.length) return "";
+  const ordered = sortByOrder(shapes, CAP_SHAPE_ORDER).map(lowerFirst);
+
+  if(ordered.length === 1) return ordered[0];
+  if(ordered.length === 2) return `${ordered[0]} becoming ${ordered[1]}`;
+  return `${ordered[0]} becoming ${ordered.slice(1).join(", then ")}`;
+}
+
+function formatColourPhrase(values){
+  const arr = values.map(lowerFirst).filter(Boolean);
+  if(!arr.length) return "";
+
+  if(arr.length === 1) return arr[0];
+
+  if(arr.length === 2){
+    const [a,b] = arr;
+    if(a.endsWith("ish")) return `${a} ${b}`;
+    if(b.endsWith("ish")) return `${a} to ${b}`;
+    return `${a} to ${b}`;
+  }
+
+  return joinHuman(arr);
+}
+
+function formatColourPhraseFromKey(key){
+  return formatColourPhrase(getSelections(key));
+}
+
+function habitatPhrase(value){
+  switch(value){
+    case "Dry sclerophyll": return "dry sclerophyll forest";
+    case "Wet sclerophyll": return "wet sclerophyll forest";
+    case "Rainforest": return "rainforest";
+    case "Pine forest": return "pine forest";
+    case "Coastal heath": return "coastal heath";
+    case "Urban": return "urban habitat";
+    case "Alpine": return "alpine habitat";
+    case "Other": return "other habitat";
+    default: return lowerFirst(value);
+  }
+}
+
+function substratePhrase(value){
+  return lowerFirst(value);
+}
+
+function buildHabitatSentence(){
+  const habitat = getSelections("habitat").map(habitatPhrase);
+  const substrate = getSelections("substrate").map(substratePhrase);
+  const trees = safeTrim(state.textInputs["trees"] || "");
+  const g = state.textInputs.general || {};
+  const location = safeTrim(g.location || "");
+  const gps = safeTrim(g.gps_coordinates || "");
+
+  const parts = [];
+
   if(substrate.length) parts.push(`on ${joinHuman(substrate)}`);
+  if(habitat.length) parts.push(`in ${joinHuman(habitat)}`);
   if(trees) parts.push(`near ${trees}`);
+  if(location) parts.push(`at ${location}`);
+  if(gps) parts.push(`(${gps})`);
 
   if(!parts.length) return "";
   return `Growing ${parts.join(" ")}`;
+}
+
+function specimenCollectionSentence(){
+  const collected = getSelections("specimen_collection");
+  if(!collected.length) return "";
+  return collected[0] === "Yes" ? "Specimen collected." : "Specimen not collected.";
+}
+
+function bruisingSentence(){
+  const bruising = lowerSelections("bruising").filter(v => v !== "none");
+  if(!bruising.length) return "";
+  return sentence(`Bruising/staining ${joinHuman(bruising)}`);
+}
+
+function veilPhrase(){
+  const partialVeil = getSelections("partial_veil");
+  const volva = getSelections("volva");
+  const parts = [];
+
+  if(partialVeil.length && partialVeil[0] !== "None"){
+    parts.push(`partial veil ${lowerFirst(partialVeil[0])}`);
+  }
+  if(volva.length && volva[0] !== "None"){
+    parts.push(`volva ${lowerFirst(volva[0])}`);
+  }
+
+  return joinHuman(parts);
+}
+
+function lamellulaePhrase(){
+  const val = getSelections("lamellulae")[0] || "";
+  if(val === "Present (few)") return "with few lamellulae";
+  if(val === "Present (many)") return "with many lamellulae";
+  if(val === "Unsure") return "lamellulae uncertain";
+  return "";
+}
+
+function lamellaeFeaturePhrase(){
+  const feats = getSelections("lam_features");
+  if(!feats.length) return "";
+
+  const parts = [];
+  const hasMarginate = feats.includes("Marginate");
+  const hasSerrate = feats.includes("Serrate edge");
+
+  if(hasMarginate || hasSerrate){
+    const edgeBits = [];
+    if(hasMarginate) edgeBits.push("marginate");
+    if(hasSerrate) edgeBits.push("serrate");
+    parts.push(`edge ${joinHuman(edgeBits)}`);
+  }
+
+  if(feats.includes("Anastomosing")) parts.push("lamellae anastomosing");
+  if(feats.includes("Intervenose")) parts.push("with intervenose connections");
+  if(feats.includes("Forked (furcate)")) parts.push("with forked lamellae");
+  if(feats.includes("Pseudogills (ridges)")) parts.push("appearing as pseudogills");
+  if(feats.includes("Inaequihymeniiferous")) parts.push("mottled from uneven spore release");
+
+  return joinHuman(parts);
+}
+
+function buildAdditionalNotesSentence(excludeKeys = []){
+  const flow = getFlow();
+  const extraNotes = [];
+
+  for(const sec of flow){
+    const note = getNote(sec.key);
+    if(note && !excludeKeys.includes(sec.key)){
+      extraNotes.push(note);
+    }
+  }
+
+  if(!extraNotes.length) return "";
+  return sentence(`Additional notes: ${extraNotes.join("; ")}`);
+}
+
+function isNegativeSelectionValue(key, value){
+  const v = safeTrim(value);
+  if(!v) return true;
+
+  const exactNegative = new Set([
+    "None",
+    "No",
+    "Other",
+    "Absent",
+    "Not sure",
+    "Unsure",
+    "Not applicable",
+    "Not seen",
+    "Not checked",
+    "No opening observed",
+    "Absent / not obvious"
+  ]);
+
+  if(exactNegative.has(v)) return true;
+  if(v.startsWith("No ")) return true;
+  if(v.startsWith("Not ")) return true;
+
+  return false;
+}
+
+function getPositiveSelectionsForList(key){
+  return getArray(key).filter(v => !isNegativeSelectionValue(key, v));
 }
 
 /* =========================
@@ -1568,8 +2091,9 @@ function generateListDescription(){
   const g = state.textInputs.general || {};
   if(!isEmpty(g.observer_name)) lines.push(`Observer's name: ${safeTrim(g.observer_name)}`);
   if(!isEmpty(g.date)) lines.push(`Date: ${safeTrim(g.date)}`);
-  if(!isEmpty(g.location)) lines.push(`Location: ${safeTrim(g.location)}`);
   if(!isEmpty(g.specimen_number)) lines.push(`Specimen number: ${safeTrim(g.specimen_number)}`);
+  if(!isEmpty(g.location)) lines.push(`Location: ${safeTrim(g.location)}`);
+  if(!isEmpty(g.gps_coordinates)) lines.push(`GPS coordinates: ${safeTrim(g.gps_coordinates)}`);
   if(lines.length) lines.push("");
 
   const flow = getFlow();
@@ -1622,8 +2146,9 @@ function generateListDescription(){
       continue;
     }
 
-    const sel = getArray(sec.key);
-    if(shouldOmitSelection(sec.key, sel)){
+    const sel = getPositiveSelectionsForList(sec.key);
+
+    if(state.skipped.has(sec.key) || !sel.length){
       const note = safeTrim(state.notes[sec.key] || "");
       if(!isEmpty(note)){
         lines.push(`${sec.title}: ${note}`);
@@ -1632,7 +2157,11 @@ function generateListDescription(){
       continue;
     }
 
-    const val = formatSelection(sel);
+    let val = formatSelection(sel);
+    if(sec.key === "cap_shape"){
+      val = formatCapShapePreview() || val;
+    }
+
     const note = safeTrim(state.notes[sec.key] || "");
     const suffix = note ? `. ${note}` : "";
     lines.push(`${sec.title}: ${val}${suffix}`);
@@ -1645,6 +2174,389 @@ function generateListDescription(){
 }
 
 /* =========================
+   TYPE-SPECIFIC WRITTEN DESCRIPTION
+========================= */
+
+function buildMushroomWrittenDescription(){
+  const paragraphs = [];
+
+  const introBits = [];
+  const growth = lowerSelections("growth_habit");
+  const attachment = lowerSelections("fruit_attachment");
+  if(growth.length) introBits.push(joinHuman(growth));
+  if(attachment.length) introBits.push(joinHuman(attachment));
+  addSentence(paragraphs, introBits.length ? `Fruiting bodies ${introBits.join(", ")}` : "");
+
+  const pileusBits = [];
+  const capSize = measurementText("cap_diameter", "", true);
+  if(capSize) pileusBits.push(`Pileus ${capSize}`);
+  const capShape = formatCapShapePreview();
+  if(capShape) pileusBits.push(capShape);
+  const capColour = formatColourPhraseFromKey("cap_colour");
+  if(capColour) pileusBits.push(capColour);
+  const capTexture = lowerSelections("cap_texture");
+  if(capTexture.length) pileusBits.push(`surface ${joinHuman(capTexture)}`);
+  const capOrnament = lowerSelections("cap_ornament");
+  if(capOrnament.length) pileusBits.push(joinHuman(capOrnament));
+  const capCuticle = lowerSelections("cap_cuticle");
+  if(capCuticle.length) pileusBits.push(joinHuman(capCuticle));
+  const capMargin = lowerSelections("cap_margin");
+  if(capMargin.length) pileusBits.push(`margin ${joinHuman(capMargin)}`);
+  addSentence(paragraphs, pileusBits.join(", "));
+
+  const hym = getSingle("hymenium_type");
+  if(hym === "Lamellae"){
+    addSentence(paragraphs, "Hymenium lamellate");
+
+    const lamBits = ["Lamellae"];
+    const attach = lowerSelections("lam_attach");
+    if(attach.length) lamBits.push(joinHuman(attach));
+    const spacing = lowerSelections("lam_spacing");
+    if(spacing.length) lamBits.push(joinHuman(spacing));
+    const lamellulae = lamellulaePhrase();
+    if(lamellulae) lamBits.push(lamellulae);
+
+    const young = formatColourPhrase(getSelections("lam_young_colour"));
+    const mature = formatColourPhrase(getSelections("lam_mature_colour"));
+    if(young && mature) lamBits.push(`${young}, becoming ${mature}`);
+    else if(young) lamBits.push(young);
+    else if(mature) lamBits.push(mature);
+
+    const lamFeat = lamellaeFeaturePhrase();
+    if(lamFeat) lamBits.push(lamFeat);
+
+    addSentence(paragraphs, lamBits.join(", "));
+  }
+  else if(hym === "Pores/Tubes"){
+    addSentence(paragraphs, "Hymenium poroid");
+
+    const poreBits = [];
+    const shape = lowerSelections("pore_shape");
+    if(shape.length) poreBits.push(`pores ${joinHuman(shape)}`);
+    const density = getSelections("pore_density");
+    if(density.length) poreBits.push(lowerFirst(density[0]));
+    const surface = lowerSelections("pore_surface");
+    if(surface.length) poreBits.push(`pore surface ${joinHuman(surface)}`);
+    addSentence(paragraphs, poreBits.join(", "));
+  }
+  else if(hym === "Teeth/Spines"){
+    addSentence(paragraphs, "Hymenium odontioid");
+
+    const teethBits = [];
+    const form = lowerSelections("teeth_form");
+    if(form.length) teethBits.push(joinHuman(form));
+    const colour = formatColourPhraseFromKey("teeth_colour");
+    if(colour) teethBits.push(colour);
+    addSentence(paragraphs, teethBits.join(", "));
+  }
+  else if(hym === "Ridges/Folds"){
+    addSentence(paragraphs, "Hymenium with ridges and folds");
+
+    const ridgeBits = [];
+    const desc = lowerSelections("ridge_desc");
+    if(desc.length) ridgeBits.push(joinHuman(desc));
+    const colour = formatColourPhraseFromKey("ridge_colour");
+    if(colour) ridgeBits.push(colour);
+    addSentence(paragraphs, ridgeBits.join(", "));
+  }
+
+  const stipeBits = [];
+  const stipeLen = measurementText("stipe_length");
+  if(stipeLen) stipeBits.push(`Stipe ${stipeLen} long`);
+  const stipePosition = lowerSelections("stipe_position");
+  if(stipePosition.length) stipeBits.push(joinHuman(stipePosition));
+  const stipeColour = formatColourPhraseFromKey("stipe_colour");
+  if(stipeColour) stipeBits.push(stipeColour);
+  const veil = veilPhrase();
+  if(veil) stipeBits.push(veil);
+  addSentence(paragraphs, stipeBits.join(", "));
+
+  const spore = getSelections("spore_print");
+  if(spore.length && spore[0] !== "Other"){
+    addSentence(paragraphs, `Spore print ${lowerFirst(spore[0])}`);
+  }
+
+  const bruise = bruisingSentence();
+  if(bruise) paragraphs.push(bruise);
+
+  const odour = getNote("odour");
+  if(odour) addSentence(paragraphs, `Odour ${odour}`);
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence(["odour"]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBracketWrittenDescription(){
+  const paragraphs = [];
+
+  const introBits = [];
+  const form = lowerSelections("bracket_form");
+  if(form.length) introBits.push(joinHuman(form));
+  addSentence(paragraphs, introBits.length ? `Fruiting bodies ${introBits.join(", ")}` : "");
+
+  const upperBits = [];
+  const colour = formatColourPhraseFromKey("bracket_colour");
+  if(colour) upperBits.push(`Upper surface ${colour}`);
+  const surface = lowerSelections("bracket_surface");
+  if(surface.length) upperBits.push(joinHuman(surface));
+  addSentence(paragraphs, upperBits.join(", "));
+
+  const margin = lowerSelections("bracket_margin");
+  if(margin.length) addSentence(paragraphs, `Margin ${joinHuman(margin)}`);
+
+  addSentence(paragraphs, "Hymenium poroid");
+
+  const poreBits = [];
+  const shape = lowerSelections("pore_shape");
+  if(shape.length) poreBits.push(`Pores ${joinHuman(shape)}`);
+  const density = getSelections("pore_density");
+  if(density.length) poreBits.push(lowerFirst(density[0]));
+  const poreColour = formatColourPhraseFromKey("pore_colour");
+  if(poreColour) poreBits.push(`pore surface ${poreColour}`);
+  addSentence(paragraphs, poreBits.join(", "));
+
+  const guttation = getSelections("guttation");
+  if(guttation.length && guttation[0] === "Present"){
+    paragraphs.push("Guttation present.");
+  }
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildCoralWrittenDescription(){
+  const paragraphs = [];
+
+  const form = getSelections("coral_form")[0] || "";
+  const branching = getSelections("coral_branching")[0] || "";
+  const tips = getSelections("coral_tips")[0] || "";
+  const texture = getSelections("coral_texture")[0] || "";
+  const colour = formatColourPhraseFromKey("coral_colour");
+
+  if(form === "Icicle / hanging spines (pendulate)"){
+    const bits = ["Fruiting bodies pendulate"];
+    if(colour) bits.push(colour);
+    addSentence(paragraphs, bits.join(", "));
+
+    const second = [];
+    if(branching && branching !== "Not sure") second.push(`branching ${lowerFirst(branching)}`);
+    if(tips && tips !== "Not sure") second.push(`tips ${lowerFirst(tips)}`);
+    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    addSentence(paragraphs, second.join(", "));
+  } else {
+    const bits = [];
+    if(form && form !== "Not sure") bits.push(lowerFirst(form));
+    if(bits.length){
+      addSentence(paragraphs, `Fruiting bodies ${bits.join(", ")}`);
+    }
+
+    const second = [];
+    if(branching && branching !== "Not sure") second.push(`branching ${lowerFirst(branching)}`);
+    if(tips && tips !== "Not sure") second.push(`branch tips ${lowerFirst(tips)}`);
+    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(colour) second.push(colour);
+    addSentence(paragraphs, second.join(", "));
+  }
+
+  const bruise = bruisingSentence();
+  if(bruise) paragraphs.push(bruise);
+
+  const guttation = getSelections("guttation");
+  if(guttation.length && guttation[0] === "Present"){
+    paragraphs.push("Guttation present.");
+  }
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildPuffballWrittenDescription(){
+  const paragraphs = [];
+
+  const introBits = [];
+  const form = getSelections("puff_form");
+  if(form.length) introBits.push(lowerFirst(form[0]));
+  const colour = formatColourPhraseFromKey("puff_surface_colour");
+  if(colour) introBits.push(colour);
+  addSentence(paragraphs, introBits.length ? `Fruiting bodies ${introBits.join(", ")}` : "");
+
+  const peridium = getSelections("peridium");
+  if(peridium.length && peridium[0] !== "Not sure"){
+    addSentence(paragraphs, `Peridium ${lowerFirst(peridium[0])}`);
+  }
+
+  const opening = getSelections("puff_opening");
+  if(opening.length){
+    addSentence(paragraphs, `Dehiscence by ${lowerFirst(opening[0])}`);
+  }
+
+  const gleba = getSelections("gleba");
+  if(gleba.length){
+    addSentence(paragraphs, `Gleba ${lowerFirst(gleba[0])}`);
+  }
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildStinkhornWrittenDescription(){
+  const paragraphs = [];
+
+  const egg = getSelections("egg_present");
+  if(egg.length && egg[0] === "Yes"){
+    paragraphs.push("Fruiting bodies arising from an egg stage.");
+  } else {
+    paragraphs.push("Fruiting bodies observed in mature condition.");
+  }
+
+  const form = getSelections("stink_form");
+  if(form.length && form[0] !== "Not sure"){
+    addSentence(paragraphs, `Receptacle ${lowerFirst(form[0])}`);
+  }
+
+  const gleba = getSelections("gleba_colour");
+  if(gleba.length && gleba[0] !== "Not seen"){
+    addSentence(paragraphs, `Gleba ${lowerFirst(gleba[0])}`);
+  }
+
+  const odour = getNote("odour");
+  if(odour) addSentence(paragraphs, `Odour ${odour}`);
+
+  const volva = getSelections("volva");
+  if(volva.length){
+    if(volva[0] === "Present") addSentence(paragraphs, "Egg remnant present at the base");
+    else if(volva[0] === "Absent") addSentence(paragraphs, "Egg remnant not observed at the base");
+  }
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence(["odour"]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildCupsJelliesWrittenDescription(){
+  const paragraphs = [];
+
+  const form = getSelections("cup_form")[0] || "";
+  const inside = formatColourPhraseFromKey("cup_inside_colour");
+  const outside = formatColourPhraseFromKey("cup_outside_colour");
+  const texture = getSelections("cup_texture")[0] || "";
+  const margin = getSelections("cup_margin")[0] || "";
+  const jelly = getSelections("jelly_consistency")[0] || "";
+
+  if(form === "Jelly"){
+    const introBits = ["Fruiting bodies gelatinous"];
+    if(outside) introBits.push(outside);
+    addSentence(paragraphs, introBits.join(", "));
+
+    const second = [];
+    if(jelly && jelly !== "Not applicable") second.push(`consistency ${lowerFirst(jelly)}`);
+    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    addSentence(paragraphs, second.join(", "));
+  } else {
+    addSentence(paragraphs, "Fruiting bodies cupulate or discoid");
+
+    const second = [];
+    if(margin && margin !== "Not applicable") second.push(`margin ${lowerFirst(margin)}`);
+    if(inside) second.push(`inner surface ${inside}`);
+    if(outside) second.push(`outer surface ${outside}`);
+    if(texture && texture !== "Not sure") second.push(lowerFirst(texture));
+    addSentence(paragraphs, second.join(", "));
+  }
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildMorelsWrittenDescription(){
+  const paragraphs = [];
+
+  const introBits = [];
+  const mType = getSelections("morel_type");
+  if(mType.length && mType[0] !== "Not sure"){
+    introBits.push(lowerFirst(mType[0]));
+  }
+  addSentence(paragraphs, introBits.length ? `Fruiting bodies ${introBits.join(", ")}` : "");
+
+  const formBits = [];
+  const relation = getSelections("cap_stipe_relation");
+  if(relation.length && relation[0] !== "Not sure"){
+    formBits.push(`cap–stipe relationship ${lowerFirst(relation[0])}`);
+  }
+  const surface = getSelections("morel_surface");
+  if(surface.length && surface[0] !== "Not sure"){
+    formBits.push(`surface ${lowerFirst(surface[0])}`);
+  }
+  const colour = formatColourPhraseFromKey("morel_colour");
+  if(colour) formBits.push(colour);
+  addSentence(paragraphs, formBits.join(", "));
+
+  const stipeBits = [];
+  const stipeLen = measurementText("stipe_length");
+  if(stipeLen) stipeBits.push(`Stipe ${stipeLen} long`);
+  const stipeColour = formatColourPhraseFromKey("stipe_colour");
+  if(stipeColour) stipeBits.push(stipeColour);
+  addSentence(paragraphs, stipeBits.join(", "));
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+/* =========================
    WRITTEN DESCRIPTION
 ========================= */
 
@@ -1652,294 +2564,22 @@ function generateWrittenDescription(){
   saveNotes();
 
   const type = getSingle("fungus_type");
-  const paragraphs = [];
-
   if(!type){
     showOutput("Choose a fungal type first.");
     return;
   }
 
-  if(type === "Mushroom (cap + stem)"){
-    const p1 = [];
+  let out = "";
 
-    const pileusBits = [];
-    const capSize = measurementText("cap_diameter", "", true);
-    if(capSize) pileusBits.push(`Pileus ${capSize}`);
-    const capShape = lowerSelections("cap_shape");
-    if(capShape.length) pileusBits.push(joinHuman(capShape));
-    const capTexture = lowerSelections("cap_texture");
-    if(capTexture.length) pileusBits.push(`surface ${joinHuman(capTexture)}`);
-    const capOrnament = lowerSelections("cap_ornament");
-    if(capOrnament.length) pileusBits.push(joinHuman(capOrnament));
-    const capCuticle = lowerSelections("cap_cuticle");
-    if(capCuticle.length) pileusBits.push(joinHuman(capCuticle));
-    const capColour = lowerSelections("cap_colour");
-    if(capColour.length) pileusBits.push(`${joinHuman(capColour)}`);
-    const capMargin = lowerSelections("cap_margin");
-    if(capMargin.length) pileusBits.push(`margin ${joinHuman(capMargin)}`);
-    addSentence(p1, pileusBits.join(", "));
+  if(type === "Mushrooms") out = buildMushroomWrittenDescription();
+  else if(type === "Bracket / Polypore") out = buildBracketWrittenDescription();
+  else if(type === "Coral / Club / Icicle") out = buildCoralWrittenDescription();
+  else if(type === "Puffball / Earthball") out = buildPuffballWrittenDescription();
+  else if(type === "Stinkhorn / Cage fungus") out = buildStinkhornWrittenDescription();
+  else if(type === "Cups / Discs / Jellies") out = buildCupsJelliesWrittenDescription();
+  else if(type === "Morels & allies") out = buildMorelsWrittenDescription();
 
-    const hym = getSingle("hymenium_type");
-    if(hym === "Lamellae"){
-      const lamBits = ["Lamellae"];
-      const attach = lowerSelections("lam_attach");
-      if(attach.length) lamBits.push(joinHuman(attach));
-      const spacing = lowerSelections("lam_spacing");
-      if(spacing.length) lamBits.push(joinHuman(spacing));
-      const lamellulae = getSelections("lamellulae");
-      if(lamellulae.length && lamellulae[0] !== "Absent / not obvious"){
-        lamBits.push(lowerFirst(lamellulae[0]));
-      }
-      const young = lowerSelections("lam_young_colour");
-      const mature = lowerSelections("lam_mature_colour");
-      if(young.length && mature.length) lamBits.push(`initially ${joinHuman(young)}, becoming ${joinHuman(mature)}`);
-      else if(young.length) lamBits.push(joinHuman(young));
-      else if(mature.length) lamBits.push(joinHuman(mature));
-      const lamFeatures = lowerSelections("lam_features");
-      if(lamFeatures.length) lamBits.push(joinHuman(lamFeatures));
-      addSentence(p1, lamBits.join(", "));
-    }
-    else if(hym === "Pores/Tubes"){
-      const poreBits = ["Hymenophore poroid"];
-      const shape = lowerSelections("pore_shape");
-      if(shape.length) poreBits.push(`pores ${joinHuman(shape)}`);
-      const density = getSelections("pore_density");
-      if(density.length) poreBits.push(lowerFirst(density[0]));
-      const surface = lowerSelections("pore_surface");
-      if(surface.length) poreBits.push(`pore surface ${joinHuman(surface)}`);
-      addSentence(p1, poreBits.join(", "));
-    }
-    else if(hym === "Teeth/Spines"){
-      const teethBits = ["Hymenophore toothed"];
-      const form = lowerSelections("teeth_form");
-      if(form.length) teethBits.push(joinHuman(form));
-      const colour = lowerSelections("teeth_colour");
-      if(colour.length) teethBits.push(joinHuman(colour));
-      addSentence(p1, teethBits.join(", "));
-    }
-    else if(hym === "Ridges/Folds"){
-      const ridgeBits = ["Hymenophore with ridges/folds"];
-      const desc = lowerSelections("ridge_desc");
-      if(desc.length) ridgeBits.push(joinHuman(desc));
-      const colour = lowerSelections("ridge_colour");
-      if(colour.length) ridgeBits.push(joinHuman(colour));
-      addSentence(p1, ridgeBits.join(", "));
-    }
-
-    const stipeBits = [];
-    const stipeLen = measurementText("stipe_length", "Stipe");
-    if(stipeLen) stipeBits.push(stipeLen);
-    const stipeColour = lowerSelections("stipe_colour");
-    if(stipeColour.length) stipeBits.push(joinHuman(stipeColour));
-    const stipePosition = lowerSelections("stipe_position");
-    if(stipePosition.length) stipeBits.push(joinHuman(stipePosition));
-    const partialVeil = getSelections("partial_veil");
-    if(partialVeil.length && partialVeil[0] !== "None"){
-      stipeBits.push(`partial veil ${lowerFirst(partialVeil[0])}`);
-    }
-    const volva = getSelections("volva");
-    if(volva.length && volva[0] !== "None"){
-      stipeBits.push(`volva ${lowerFirst(volva[0])}`);
-    }
-    addSentence(p1, stipeBits.join(", "));
-
-    const miscBits = [];
-    const spore = getSelections("spore_print");
-    if(spore.length && spore[0] !== "Other"){
-      miscBits.push(`spore print ${lowerFirst(spore[0])}`);
-    }
-    const bruising = lowerSelections("bruising");
-    if(bruising.length && !bruising.includes("none")){
-      miscBits.push(`bruising/staining ${joinHuman(bruising)}`);
-    }
-    const odour = getNote("odour");
-    if(odour) miscBits.push(`odour ${odour}`);
-    addSentence(p1, miscBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  else if(type === "Bracket / Polypore"){
-    const p1 = [];
-
-    const upperBits = ["Basidiome"];
-    const form = lowerSelections("bracket_form");
-    if(form.length) upperBits.push(joinHuman(form));
-    const margin = lowerSelections("bracket_margin");
-    if(margin.length) upperBits.push(`margin ${joinHuman(margin)}`);
-    const surface = lowerSelections("bracket_surface");
-    if(surface.length) upperBits.push(`upper surface ${joinHuman(surface)}`);
-    const colour = lowerSelections("bracket_colour");
-    if(colour.length) upperBits.push(joinHuman(colour));
-    addSentence(p1, upperBits.join(", "));
-
-    const poreBits = [];
-    const shape = lowerSelections("pore_shape");
-    if(shape.length) poreBits.push(`pores ${joinHuman(shape)}`);
-    const density = getSelections("pore_density");
-    if(density.length) poreBits.push(lowerFirst(density[0]));
-    const poreColour = lowerSelections("pore_colour");
-    if(poreColour.length) poreBits.push(`pore surface ${joinHuman(poreColour)}`);
-    const guttation = getSelections("guttation");
-    if(guttation.length && guttation[0] === "Present"){
-      poreBits.push("guttation present");
-    }
-    addSentence(p1, poreBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  else if(type === "Coral / Club / Icicle"){
-    const p1 = [];
-
-    addSentence(p1, `Fungal type ${type.toLowerCase()}`);
-
-    const coralBits = [];
-    const form = getSelections("coral_form");
-    if(form.length) coralBits.push(lowerFirst(form[0]));
-    const branching = getSelections("coral_branching");
-    if(branching.length) coralBits.push(`branching ${lowerFirst(branching[0])}`);
-    const tips = getSelections("coral_tips");
-    if(tips.length) coralBits.push(`branch tips ${lowerFirst(tips[0])}`);
-    const texture = getSelections("coral_texture");
-    if(texture.length) coralBits.push(`surface ${lowerFirst(texture[0])}`);
-    const colour = lowerSelections("coral_colour");
-    if(colour.length) coralBits.push(joinHuman(colour));
-    addSentence(p1, coralBits.join(", "));
-
-    const extraBits = [];
-    const bruising = lowerSelections("bruising");
-    if(bruising.length && !bruising.includes("none")){
-      extraBits.push(`bruising/staining ${joinHuman(bruising)}`);
-    }
-    const guttation = getSelections("guttation");
-    if(guttation.length && guttation[0] === "Present"){
-      extraBits.push("guttation present");
-    }
-    addSentence(p1, extraBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  else if(type === "Puffball / Earthball"){
-    const p1 = [];
-
-    const outerBits = [];
-    const form = getSelections("puff_form");
-    if(form.length) outerBits.push(lowerFirst(form[0]));
-    const peridium = getSelections("peridium");
-    if(peridium.length) outerBits.push(`peridium ${lowerFirst(peridium[0])}`);
-    const colour = lowerSelections("puff_surface_colour");
-    if(colour.length) outerBits.push(joinHuman(colour));
-    addSentence(p1, outerBits.join(", "));
-
-    const innerBits = [];
-    const opening = getSelections("puff_opening");
-    if(opening.length) innerBits.push(`opening by ${lowerFirst(opening[0])}`);
-    const gleba = getSelections("gleba");
-    if(gleba.length) innerBits.push(`gleba ${lowerFirst(gleba[0])}`);
-    addSentence(p1, innerBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  else if(type === "Stinkhorn / Cage fungus"){
-    const p1 = [];
-
-    const formBits = [];
-    const egg = getSelections("egg_present");
-    if(egg.length) formBits.push(`egg stage ${lowerFirst(egg[0])}`);
-    const form = getSelections("stink_form");
-    if(form.length) formBits.push(`receptacle ${lowerFirst(form[0])}`);
-    const gleba = getSelections("gleba_colour");
-    if(gleba.length) formBits.push(`gleba ${lowerFirst(gleba[0])}`);
-    addSentence(p1, formBits.join(", "));
-
-    const extraBits = [];
-    const odour = getNote("odour");
-    if(odour) extraBits.push(`odour ${odour}`);
-    const volva = getSelections("volva");
-    if(volva.length && volva[0] !== "Absent"){
-      extraBits.push(`volva ${lowerFirst(volva[0])}`);
-    }
-    addSentence(p1, extraBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  else if(type === "Cups / Discs / Jellies"){
-    const p1 = [];
-
-    const formBits = [];
-    const form = getSelections("cup_form");
-    if(form.length) formBits.push(lowerFirst(form[0]));
-    const margin = getSelections("cup_margin");
-    if(margin.length && margin[0] !== "Not applicable"){
-      formBits.push(`margin ${lowerFirst(margin[0])}`);
-    }
-    const inside = lowerSelections("cup_inside_colour");
-    if(inside.length) formBits.push(`inner/spore surface ${joinHuman(inside)}`);
-    const outside = lowerSelections("cup_outside_colour");
-    if(outside.length) formBits.push(`outer surface ${joinHuman(outside)}`);
-    addSentence(p1, formBits.join(", "));
-
-    const textureBits = [];
-    const texture = getSelections("cup_texture");
-    if(texture.length) textureBits.push(`outer surface ${lowerFirst(texture[0])}`);
-    const jelly = getSelections("jelly_consistency");
-    if(jelly.length && jelly[0] !== "Not applicable"){
-      textureBits.push(`consistency ${lowerFirst(jelly[0])}`);
-    }
-    addSentence(p1, textureBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  else if(type === "Morels & allies"){
-    const p1 = [];
-
-    const formBits = [];
-    const mType = getSelections("morel_type");
-    if(mType.length) formBits.push(lowerFirst(mType[0]));
-    const relation = getSelections("cap_stipe_relation");
-    if(relation.length) formBits.push(`cap–stipe relationship ${lowerFirst(relation[0])}`);
-    const surface = getSelections("morel_surface");
-    if(surface.length) formBits.push(`surface ${lowerFirst(surface[0])}`);
-    addSentence(p1, formBits.join(", "));
-
-    const colourBits = [];
-    const colour = lowerSelections("morel_colour");
-    if(colour.length) colourBits.push(joinHuman(colour));
-    const stipeColour = lowerSelections("stipe_colour");
-    if(stipeColour.length) colourBits.push(`stipe ${joinHuman(stipeColour)}`);
-    const stipeLen = measurementText("stipe_length", "stipe");
-    if(stipeLen) colourBits.push(stipeLen);
-    addSentence(p1, colourBits.join(", "));
-
-    paragraphs.push(...p1);
-  }
-
-  const habitatSentence = buildHabitatSentence();
-  if(habitatSentence) paragraphs.push(sentence(habitatSentence));
-
-  const extraNotes = [];
-  const flow = getFlow();
-  for(const sec of flow){
-    const note = getNote(sec.key);
-    if(note && sec.key !== "odour"){
-      extraNotes.push(note);
-    }
-  }
-  if(extraNotes.length){
-    paragraphs.push(sentence(`Additional notes: ${extraNotes.join("; ")}`));
-  }
-
-  const collected = getSelections("specimen_collection");
-  if(collected.length && collected[0] === "Yes"){
-    paragraphs.push("Specimen collected.");
-  }
-
-  const out = paragraphs.filter(Boolean).join("\n\n").trim() || "Not enough information yet to generate a written description.";
+  out = safeTrim(out) || "Not enough information yet to generate a written description.";
   showOutput(out);
   return out;
 }
@@ -1981,8 +2621,9 @@ function saveToForayLog(){
     createdAt: now.toISOString(),
     observer: safeTrim(g.observer_name || ""),
     date: safeTrim(g.date || ""),
-    location: safeTrim(g.location || ""),
     specimenNumber: safeTrim(g.specimen_number || ""),
+    location: safeTrim(g.location || ""),
+    gpsCoordinates: safeTrim(g.gps_coordinates || ""),
     fungusType: getSingle("fungus_type") || "",
     hymenium: getSingle("hymenium_type") || "",
     text: description
@@ -2028,8 +2669,9 @@ function renderForayLog(){
 
     const parts = [];
     if(item.date) parts.push(`Date: ${item.date}`);
-    if(item.location) parts.push(`Location: ${item.location}`);
     if(item.specimenNumber) parts.push(`Specimen #: ${item.specimenNumber}`);
+    if(item.location) parts.push(`Location: ${item.location}`);
+    if(item.gpsCoordinates) parts.push(`GPS: ${item.gpsCoordinates}`);
     if(item.fungusType) parts.push(`Type: ${item.fungusType}`);
     if(item.hymenium) parts.push(`Hymenium: ${item.hymenium}`);
     parts.push(`Saved: ${new Date(item.createdAt).toLocaleString()}`);
@@ -2094,8 +2736,9 @@ function exportForayLog(){
   const text = log.map((item, idx) => {
     const headerParts = [];
     if(item.date) headerParts.push(`Date: ${item.date}`);
-    if(item.location) headerParts.push(`Location: ${item.location}`);
     if(item.specimenNumber) headerParts.push(`Specimen #: ${item.specimenNumber}`);
+    if(item.location) headerParts.push(`Location: ${item.location}`);
+    if(item.gpsCoordinates) headerParts.push(`GPS: ${item.gpsCoordinates}`);
     if(item.fungusType) headerParts.push(`Type: ${item.fungusType}`);
     if(item.hymenium) headerParts.push(`Hymenium: ${item.hymenium}`);
     headerParts.push(`Saved: ${new Date(item.createdAt).toLocaleString()}`);
@@ -2114,16 +2757,26 @@ function exportForayLog(){
 }
 
 function clearForayLog(){
-  if(!confirm("Clear the entire Foray Log on this device?")) return;
-  saveForayLogArr([]);
-  renderForayLog();
+  openConfirm(
+    "Clear Foray Log",
+    "Clear the entire Foray Log on this device?",
+    (ok) => {
+      if(!ok) return;
+      saveForayLogArr([]);
+      renderForayLog();
+    }
+  );
 }
 
 /* =========================
    INIT
 ========================= */
-render();
 
+document.getElementById("confirmOverlay").addEventListener("click", (e) => {
+  if(e.target.id === "confirmOverlay") closeConfirm(false);
+});
+
+render();
 </script>
 </body>
 </html>

@@ -221,6 +221,7 @@
     font-size: 12px;
     color: var(--muted);
   }
+
   input, textarea, select{
     width: 100%;
     max-width: 100%;
@@ -235,6 +236,12 @@
     font-size: 14px;
   }
 
+  input, select{
+    min-height: 44px;
+    height: 44px;
+    line-height: 1.2;
+  }
+
   input[type="date"]{
     width:100%;
     max-width:100%;
@@ -242,6 +249,13 @@
     display:block;
     appearance: none;
     -webkit-appearance: none;
+    min-height: 44px;
+    height: 44px;
+    line-height: 1.2;
+  }
+
+  input[type="date"]::-webkit-date-and-time-value{
+    text-align: left;
   }
 
   textarea{
@@ -449,27 +463,6 @@
     justify-content:center;
     gap:10px;
   }
-  .inatDot{
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: 0.18;
-    position: relative;
-    display:inline-block;
-  }
-  .inatDot::after{
-    content:"i";
-    position:absolute;
-    inset:0;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:900;
-    font-size:12px;
-    color: currentColor;
-    opacity: 1;
-  }
 
   .stickyNavWrap{
     position: sticky;
@@ -509,7 +502,7 @@
 <div class="start" id="start">
   <div class="startCard">
     <img src="IMG_1678.png" alt="Logo" />
-    <div class="startHint">Document a fungus observation step-by-step.</div>
+    <div class="startHint">Document fungi step-by-step.</div>
     <button class="btn primary" onclick="begin()">Begin</button>
   </div>
 </div>
@@ -567,7 +560,7 @@
 
   <div class="outputActions" id="outputActions">
     <button class="btn primary inatBtn" onclick="copyAndOpenINat()">
-<img src="IMG_0238.png" alt="iNaturalist" class="inatIcon">
+      <img src="IMG_0238.png" alt="iNaturalist" class="inatIcon">
       <span>Copy to Clipboard and Open iNaturalist</span>
     </button>
   </div>
@@ -610,7 +603,7 @@ const state = {
 const isEmpty = (v) => v == null || (typeof v === "string" && v.trim() === "");
 const safeTrim = (v) => (v || "").trim();
 
-const FORAY_STORAGE_KEY = "mushroom_foray_log_v1";
+const FORAY_STORAGE_KEY = "mushroom_foray_log_v2";
 
 let confirmCallback = null;
 
@@ -646,7 +639,7 @@ const COLOURS = [
   {name:"Black", hex:"#0D0D10"},
   {name:"Light brown", hex:"#AD8A60"},
   {name:"Nut brown", hex:"#8B5A2B"},
-  {name:"Chestnut", hex:"#7A5A3B"},
+  {name:"Chestnut brown", hex:"#7A5A3B"},
   {name:"Chocolate", hex:"#4B3728"},
   {name:"Dark brown", hex:"#3A2C22"},
   {name:"Umber", hex:"#6F4E37"},
@@ -670,15 +663,15 @@ const GENERAL = [{
 const FUNGUS_TYPE = [{
   key:"fungus_type",
   title:"Fungal Type",
-  subtitle:"Choose the best match. This sets a type-specific pathway.",
+  subtitle:"Choose the best match.",
   type:"options",
   options:[
     {v:"Mushrooms", h:"Cap and stem; gills (agarics), teeth (hydnoid), tubes/pores (boletes)."},
-    {v:"Bracket / Polypore", h:"Shelf fungi; often on wood, pores underneath."},
+    {v:"Bracket / Polypore", h:"Shelf fungi, often on wood, pores underneath."},
     {v:"Coral / Club / Icicle", h:"Branched, club-shaped, or pendulate forms."},
-    {v:"Puffball / Earthball", h:"Round/pear-shaped; spores inside."},
+    {v:"Puffball / Earthball", h:"Round/pear-shaped, spores inside."},
     {v:"Stinkhorn / Cage fungus", h:"Often emerges from an egg; foul smell; slimy spore mass."},
-    {v:"Cups / Discs / Jellies", h:"Cup-like, disc-like, or gelatinous fungi."},
+    {v:"Cups / Discs / Jellies", h:"Cup-like, disc-like, saddle-like, stromatic, or gelatinous fungi."},
     {v:"Morels & allies", h:"Morels, saddles, brain-like fungi, and allies."},
   ]
 }];
@@ -693,6 +686,7 @@ const UNIVERSAL_ENV = [
       {v:"Dry sclerophyll", h:"Open eucalypt woodland; drier understory."},
       {v:"Wet sclerophyll", h:"Taller eucalypt forest; moister gullies."},
       {v:"Rainforest", h:"Closed canopy; humid and shaded."},
+      {v:"Cloud rainforest", h:"Cool, wet upland rainforest, often mossy."},
       {v:"Pine forest", h:"Plantation or wild pines nearby."},
       {v:"Coastal heath", h:"Low shrubs; sandy coastal soils."},
       {v:"Urban", h:"Gardens, parks, mulch beds, lawns."},
@@ -710,7 +704,7 @@ const UNIVERSAL_ENV = [
   {
     key:"substrate",
     title:"Substrate",
-    subtitle:"What is the fungus growing from/on?",
+    subtitle:"What is the fungus growing from or on?",
     type:"options",
     options:[
       {v:"Woodchips", h:"Mulch/woodchip beds."},
@@ -721,11 +715,27 @@ const UNIVERSAL_ENV = [
       {v:"Living tree", h:"On living trunk/roots."},
       {v:"Dead standing wood", h:"Standing dead wood."},
       {v:"Leaf litter", h:"Among fallen leaves."},
-      {v:"Moss", h:"In/through moss."},
+      {v:"Moss", h:"In or through moss."},
       {v:"Sand", h:"Sandy soil/dunes."},
       {v:"Grass/Turf", h:"Lawns or turf."},
       {v:"Dung", h:"Dung/manure."},
       {v:"Burn site", h:"Post-fire substrate."},
+      {v:"Other", h:"Use notes to describe."},
+    ]
+  },
+  {
+    key:"soil_type",
+    title:"Soil Type",
+    subtitle:"Optional. Only shown when soil is selected as the substrate.",
+    type:"options",
+    options:[
+      {v:"Rich humus", h:"Dark organic-rich forest soil or humus."},
+      {v:"Loam", h:"Balanced soil with mixed particle sizes."},
+      {v:"Sandy loam", h:"Loam with a higher sand content."},
+      {v:"Sandy", h:"Loose sandy soil."},
+      {v:"Clay", h:"Heavy clay-rich soil."},
+      {v:"Peaty", h:"Organic peaty soil."},
+      {v:"Compacted / disturbed soil", h:"Compacted, trampled, or obviously disturbed ground."},
       {v:"Other", h:"Use notes to describe."},
     ]
   },
@@ -765,12 +775,12 @@ const MUSHROOM_PRE = [
     ]
   },
 
-  { key:"cap_colour", title:"Pileus Colour", subtitle:"Select one or more colours (tap to toggle). Colour name will display.", type:"palette", multi:true },
-  { key:"cap_diameter", title:"Pileus Diameter", subtitle:"Enter measurements in millimetres (mm).", type:"measure_mm" },
+  { key:"cap_colour", title:"Pileus Colour (Cap Colour)", subtitle:"Select one or more colours (tap to toggle). Colour name will display.", type:"palette", multi:true },
+  { key:"cap_diameter", title:"Pileus Diameter (Cap Width)", subtitle:"Enter measurements in millimetres (mm).", type:"measure_mm" },
 
   {
     key:"cap_shape",
-    title:"Pileus Shape",
+    title:"Pileus Shape (Cap Shape)",
     subtitle:"Overall cap shape (beginner translation in brackets). Tap to toggle. You can select more than one stage to show how the pileus changes over time.",
     type:"options",
     multi:true,
@@ -783,14 +793,14 @@ const MUSHROOM_PRE = [
       {v:"Plane", h:"(flat) Flattened cap."},
       {v:"Conical", h:"(cone) Cone-shaped."},
       {v:"Campanulate", h:"(bell) Bell-shaped cap."},
-      {v:"Depressed", h:"(dipped center) Center lower than margin."},
+      {v:"Depressed", h:"(dipped centre) Centre lower than margin."},
       {v:"Umbonate", h:"(bump) Central raised bump."},
     ]
   },
 
   {
     key:"cap_texture",
-    title:"Pileus Surface Texture",
+    title:"Pileus Surface Texture (Cap Surface)",
     subtitle:"Surface feel/appearance (beginner translation in brackets). Tap to toggle.",
     type:"options",
     multi:true,
@@ -807,14 +817,16 @@ const MUSHROOM_PRE = [
 
   {
     key:"cap_ornament",
-    title:"Pileus Ornamentation",
+    title:"Pileus Ornamentation (Cap Surface Features)",
     subtitle:"Raised features on the cap surface (tap to toggle).",
     type:"options",
     multi:true,
     options:[
       {v:"Verrucose", h:"(warted) Covered in warts/bumps."},
       {v:"Squamulose", h:"(scaly) Small scales on surface."},
-      {v:"Fibrillose", h:"(fibrous) Fine fibers/threads visible."},
+      {v:"Fibrillose", h:"(fibrous) Fine fibres/threads visible."},
+      {v:"Floccose", h:"(woolly) Soft woolly or cottony patches on the cap."},
+      {v:"Pulverulent", h:"(powdery) Powdery or dusty coating on the cap."},
       {v:"Rimose", h:"(cracked) Radial cracking, often on dry caps."},
       {v:"Zonate", h:"(zoned) Concentric colour/texture zones/bands."},
     ]
@@ -822,19 +834,19 @@ const MUSHROOM_PRE = [
 
   {
     key:"cap_cuticle",
-    title:"Pileus Cuticle / Surface Behaviour",
+    title:"Pileus Cuticle / Surface Behaviour (Cap Skin)",
     subtitle:"Cuticle behaviour and moisture-related colour change (tap to toggle).",
     type:"options",
     multi:true,
     options:[
-      {v:"Hygrophanous", h:"Cap darker when moist, becoming a different (usually paler) colour as it dries, often showing a two-tone banded effect."},
-      {v:"Peelable cuticle", h:"Skin/cuticle can be peeled from the cap (at least near margin)."},
+      {v:"Hygrophanous", h:"Cap darker when moist, becoming a different, usually paler, colour as it dries, often showing a two-tone banded effect."},
+      {v:"Peelable cuticle", h:"Skin/cuticle can be peeled from the cap, at least near margin."},
     ]
   },
 
   {
     key:"cap_margin",
-    title:"Pileus Margin Characteristics",
+    title:"Pileus Margin Characteristics (Cap Edge)",
     subtitle:"Edge of the cap (beginner translation in brackets).",
     type:"options",
     options:[
@@ -852,14 +864,14 @@ const MUSHROOM_PRE = [
 
   {
     key:"hymenium_type",
-    title:"Hymenium Type",
-    subtitle:"Choose the spore-bearing surface (this splits the pathway).",
+    title:"Hymenium Type (Spore-bearing Surface)",
+    subtitle:"Choose the spore-bearing surface. This splits the pathway.",
     type:"options",
     options:[
       {v:"Lamellae", h:"(gills) Thin blade-like gills under cap."},
       {v:"Pores/Tubes", h:"(pores) Sponge-like pores/tubes under cap."},
-      {v:"Teeth/Spines", h:"(toothed) Hanging teeth/spines (e.g., Hydnum, Sarcodon)."},
-      {v:"Ridges/Folds", h:"(chanterelle-like) Blunt ridges/folds rather than true gills."},
+      {v:"Teeth/Spines", h:"(teeth) Hanging teeth/spines."},
+      {v:"Ridges/Folds", h:"(false gills) Blunt ridges/folds rather than true gills."},
     ]
   },
 ];
@@ -867,7 +879,7 @@ const MUSHROOM_PRE = [
 const LAM = [
   {
     key:"lam_attach",
-    title:"Lamellae Attachment to Stipe",
+    title:"Lamellae Attachment to Stipe (Gill Attachment to Stem)",
     subtitle:"How gills meet the stipe (beginner translation in brackets). Tap to toggle.",
     type:"options",
     multi:true,
@@ -885,7 +897,7 @@ const LAM = [
   },
   {
     key:"lam_spacing",
-    title:"Lamellae Spacing",
+    title:"Lamellae Spacing (Gill Spacing)",
     subtitle:"How close gills are (tap to toggle).",
     type:"options",
     multi:true,
@@ -898,33 +910,47 @@ const LAM = [
   },
   {
     key:"lamellulae",
-    title:"Lamellulae",
+    title:"Lamellulae (Short Gills)",
     subtitle:"Short gills that do not reach the stipe.",
     type:"options",
     options:[
       {v:"Absent / not obvious", h:"No obvious short gills."},
       {v:"Present (few)", h:"A small number of short gills."},
       {v:"Present (many)", h:"Many short gills between full gills."},
-      {v:"Unsure", h:"Not sure—use notes."},
+      {v:"Unsure", h:"Not sure. Use notes."},
     ]
   },
-  { key:"lam_young_colour", title:"Lamellae Colour (Young)", subtitle:"Select colour(s) seen on young/fresh gills (tap to toggle).", type:"palette", multi:true },
-  { key:"lam_mature_colour", title:"Lamellae Colour (Mature / Spore-influenced)", subtitle:"Select colour(s) once mature/spores present (tap to toggle).", type:"palette", multi:true },
+  { key:"lam_young_colour", title:"Lamellae Colour (Young Gill Colour)", subtitle:"Select colour(s) seen on young or fresh gills (tap to toggle).", type:"palette", multi:true },
+  { key:"lam_mature_colour", title:"Lamellae Colour (Mature / Spore-influenced Gill Colour)", subtitle:"Select colour(s) once mature or spore-influenced (tap to toggle).", type:"palette", multi:true },
+  {
+    key:"lam_edge",
+    title:"Lamellae Edge Type (Gill Edge)",
+    subtitle:"Shape or condition of the gill edge.",
+    type:"options",
+    multi:true,
+    options:[
+      {v:"Even", h:"Straight, even edge."},
+      {v:"Undulate", h:"Wavy edge."},
+      {v:"Serrate", h:"Tooth-like edge."},
+      {v:"Marginate", h:"Edge a distinct colour from the gill face."},
+      {v:"Eroded", h:"Irregular or worn-looking edge."},
+      {v:"Fimbriate", h:"Fringed or hairy-looking edge."},
+      {v:"Not observed", h:"Not clearly seen."},
+    ]
+  },
   {
     key:"lam_features",
-    title:"Lamellae Features",
+    title:"Lamellae Features (Gill Features)",
     subtitle:"Additional gill traits (tap to toggle).",
     type:"options",
     multi:true,
     options:[
       {v:"Lamellulae present", h:"Short gills occur between full gills."},
-      {v:"Anastomosing", h:"Gills connect to each other (netted/connected)."},
+      {v:"Anastomosing", h:"Gills connect to each other, netted/connected."},
       {v:"Intervenose", h:"Vein-like cross connections between gills."},
       {v:"Forked (furcate)", h:"Gills split into branches."},
       {v:"Pseudogills (ridges)", h:"Ridge-like false gills."},
       {v:"Inaequihymeniiferous", h:"Mottled gills from uneven spore release."},
-      {v:"Marginate", h:"Gill edges a different colour (distinct margin)."},
-      {v:"Serrate edge", h:"Tooth-like edge."},
     ]
   },
 ];
@@ -932,13 +958,13 @@ const LAM = [
 const POR = [
   { key:"pore_shape", title:"Pores Characteristics (Shape)", subtitle:"Shape of pores seen underneath.", type:"options",
     options:[ {v:"Round",h:"Circular pores."},{v:"Angular",h:"Polygon/angular pores."},{v:"Elongated",h:"Stretched or maze-like pores."} ] },
-  { key:"pore_density", title:"Pore Size / Density", subtitle:"How fine the pores are (often counted as pores per mm).", type:"options",
+  { key:"pore_density", title:"Pore Size / Density", subtitle:"How fine the pores are, often counted as pores per mm.", type:"options",
     options:[
-      {v:"Very fine (not individually visible)", h:"(very fine) Typically >8 pores per mm."},
-      {v:"Fine", h:"(fine) About 6–8 pores per mm."},
-      {v:"Moderately fine", h:"(medium) About 3–4 pores per mm."},
-      {v:"Coarse", h:"(coarse) About 1–2 pores per mm."},
-      {v:"Very coarse", h:"(very coarse) <1 pore per mm; very large pores."},
+      {v:"Very fine (not individually visible)", h:"Typically >8 pores per mm."},
+      {v:"Fine", h:"About 6–8 pores per mm."},
+      {v:"Moderately fine", h:"About 3–4 pores per mm."},
+      {v:"Coarse", h:"About 1–2 pores per mm."},
+      {v:"Very coarse", h:"<1 pore per mm; very large pores."},
     ]},
   { key:"pore_surface", title:"Pore Surface Texture", subtitle:"Texture of pore surface.", type:"options",
     options:[ {v:"Smooth",h:"Even surface."},{v:"Rough",h:"Uneven, ragged, or irregular surface."} ] },
@@ -984,7 +1010,7 @@ const MUSHROOM_COMMON = [
   {
     key:"spore_print",
     title:"Spore Print",
-    subtitle:"Choose the closest spore print colour (real-life terms).",
+    subtitle:"Choose the closest spore print colour.",
     type:"options",
     options:[
       {v:"White", h:"Pure white."},
@@ -1002,38 +1028,85 @@ const MUSHROOM_COMMON = [
       {v:"Other", h:"Use notes to describe."},
     ]
   },
-  { key:"stipe_colour", title:"Stipe Colour", subtitle:"Select one or more colours for the stipe (tap to toggle).", type:"palette", multi:true },
-  { key:"stipe_length", title:"Stipe Length", subtitle:"Enter stipe length in mm (if present).", type:"measure_mm" },
+  { key:"stipe_colour", title:"Stipe Colour (Stem Colour)", subtitle:"Select one or more colours for the stipe (tap to toggle).", type:"palette", multi:true },
+  { key:"stipe_length", title:"Stipe Length (Stem Length)", subtitle:"Enter stipe length in mm, if present.", type:"measure_mm" },
   {
     key:"stipe_position",
-    title:"Stipe Position / Attachment",
-    subtitle:"Where the stipe attaches to the cap (beginner translation in brackets).",
+    title:"Stipe Position / Attachment (Stem Position)",
+    subtitle:"Where the stipe attaches to the cap.",
     type:"options",
     options:[
-      {v:"Central", h:"(center) Attached at the center."},
+      {v:"Central", h:"(centre) Attached at the centre."},
       {v:"Lateral", h:"(side) Attached near the margin/side."},
-      {v:"Eccentric", h:"(off-center) Between center and edge."},
+      {v:"Eccentric", h:"(off-centre) Between centre and edge."},
+    ]
+  },
+  {
+    key:"stipe_base_shape",
+    title:"Stipe Base Shape (Stem Base)",
+    subtitle:"Shape of the stipe base. Important in groups such as Amanita and Roanokenses.",
+    type:"options",
+    options:[
+      {v:"Equal", h:"Stem remains about the same width at the base."},
+      {v:"Slightly swollen", h:"Base a little broader than the upper stipe."},
+      {v:"Clavate", h:"Club-shaped, gradually broader toward the base."},
+      {v:"Bulbous", h:"Distinct bulb at the base."},
+      {v:"Abruptly bulbous", h:"Bulb sharply distinct from the stipe above."},
+      {v:"Marginate bulb", h:"Bulb with a distinct rim or collar-like margin."},
+      {v:"Rooting / tapering", h:"Base narrows or extends into the substrate."},
+      {v:"Not observed", h:"Base not seen clearly."},
+    ]
+  },
+  {
+    key:"stipe_surface",
+    title:"Stipe Surface / Features (Stem Surface)",
+    subtitle:"Surface texture and visible stem features (tap to toggle).",
+    type:"options",
+    multi:true,
+    options:[
+      {v:"Glabrous", h:"Smooth."},
+      {v:"Fibrillose", h:"Fine fibres visible."},
+      {v:"Floccose", h:"Soft woolly tufts or flakes."},
+      {v:"Pruinose", h:"Fine powdery bloom."},
+      {v:"Waxy", h:"Waxy-looking or waxy-feeling."},
+      {v:"Squamulose", h:"Small scales present."},
+      {v:"Striate", h:"Longitudinal lines or striations."},
+      {v:"Cortina remnants", h:"Cobwebby veil remnants on the stipe."},
+      {v:"Squamules above annular zone", h:"Small scales or patches above the ring zone."},
     ]
   },
   {
     key:"partial_veil",
-    title:"Partial Veil",
-    subtitle:"Veil structures on/near the stipe. Select the best match.",
+    title:"Partial Veil Type",
+    subtitle:"Veil structure, if present.",
     type:"options",
     options:[
-      {v:"Cortina", h:"Cobwebby veil strands (often leaves rust on stipe)."},
-      {v:"Persistent annulus", h:"Ring remains clearly."},
-      {v:"Floppy annulus", h:"Ring hangs/flops."},
-      {v:"Cogwheel annulus", h:"Toothed/gear-like ring."},
-      {v:"Striate annulus", h:"Ring with grooves/lines."},
-      {v:"Remnants only", h:"Fragments on stipe/cap edge, no full ring."},
-      {v:"None", h:"No veil observed."},
+      {v:"Cortina", h:"Cobwebby veil strands."},
+      {v:"Membranous veil", h:"Membranous veil likely to form a ring."},
+      {v:"Fragile veil", h:"Very thin or fragile partial veil."},
+      {v:"Remnants only", h:"Fragments on stipe or cap edge, no clear intact veil."},
+      {v:"None observed", h:"No partial veil seen."},
+    ]
+  },
+  {
+    key:"annulus_state",
+    title:"Annulus / Annular Zone (Ring)",
+    subtitle:"State of the ring or ring zone on mature material.",
+    type:"options",
+    options:[
+      {v:"Persistent annulus", h:"Clear persistent ring."},
+      {v:"Floppy annulus", h:"Hanging or movable ring."},
+      {v:"Cogwheel annulus", h:"Toothed or gear-like ring."},
+      {v:"Striate annulus", h:"Ring with grooves or striations."},
+      {v:"Annular zone only", h:"Ring zone present, but no intact ring."},
+      {v:"Exannulate", h:"No ring present on mature fruiting body."},
+      {v:"Not observed", h:"Not clearly seen."},
     ]
   },
   {
     key:"volva",
-    title:"Universal Veil / Volva",
-    subtitle:"Cup/sac or remnants at base. (Skipped if Cortina or Remnants only selected.)",
+    title:"Universal Veil / Volva (Cup at Base)",
+    subtitle:"Cup, sac, rim, or other universal veil remnants at the base.",
     type:"options",
     options:[
       {v:"Saccate (free)", h:"Bag-like cup at base, mostly free."},
@@ -1045,19 +1118,81 @@ const MUSHROOM_COMMON = [
   },
   {
     key:"bruising",
-    title:"Bruising / Staining",
-    subtitle:"Colour change when handled/cut.",
+    title:"Bruising / Staining Colour",
+    subtitle:"Colour change when handled or cut.",
     type:"options",
     multi:true,
     options:[
       {v:"Blue", h:"Turns blue."},
+      {v:"Green", h:"Turns green."},
       {v:"Red", h:"Turns red."},
       {v:"Yellow", h:"Turns yellow."},
       {v:"Brown", h:"Turns brown."},
       {v:"None", h:"No bruising/staining observed."},
     ]
   },
-  { key:"odour", title:"Odour", subtitle:"Notes only (no fixed options). Describe smell if any.", type:"notes_only" },
+  {
+    key:"bruising_speed",
+    title:"Bruising Reaction Speed",
+    subtitle:"How quickly the bruising or staining develops.",
+    type:"options",
+    options:[
+      {v:"Immediate", h:"Appears at once."},
+      {v:"Rapid", h:"Appears quickly."},
+      {v:"Slow", h:"Develops slowly."},
+      {v:"Very slow", h:"Very delayed reaction."},
+      {v:"Not observed", h:"Not checked or unclear."},
+    ]
+  },
+  {
+    key:"uv_reaction",
+    title:"UV / Fluorescence",
+    subtitle:"Was fluorescence observed under UV light?",
+    type:"options",
+    options:[
+      {v:"Present", h:"Fluorescence observed."},
+      {v:"Absent", h:"No fluorescence observed."},
+      {v:"Not tested", h:"Not checked under UV."},
+    ]
+  },
+  {
+    key:"uv_part",
+    title:"Fluorescent Part",
+    subtitle:"Which part fluoresced under UV? Tap to toggle.",
+    type:"options",
+    multi:true,
+    options:[
+      {v:"Lamellae edge", h:"Gill edge fluoresced."},
+      {v:"Lamellae face", h:"Gill face fluoresced."},
+      {v:"Pileus surface", h:"Cap surface fluoresced."},
+      {v:"Pileus margin", h:"Cap edge fluoresced."},
+      {v:"Stipe surface", h:"Stem surface fluoresced."},
+      {v:"Stipe base", h:"Stem base fluoresced."},
+      {v:"Basal mycelium", h:"Mycelium at the base fluoresced."},
+      {v:"Mycelial cords / rhizomorphs", h:"Cord-like mycelium fluoresced."},
+      {v:"Context / flesh", h:"Internal flesh fluoresced."},
+      {v:"Entire fruiting body", h:"The whole fruiting body fluoresced."},
+      {v:"Other", h:"Use notes to describe."},
+    ]
+  },
+  {
+    key:"uv_colour",
+    title:"Fluorescence Colour",
+    subtitle:"Colour of the fluorescence.",
+    type:"options",
+    multi:true,
+    options:[
+      {v:"White", h:"White fluorescence."},
+      {v:"Blue", h:"Blue fluorescence."},
+      {v:"Pale blue", h:"Pale blue fluorescence."},
+      {v:"Green", h:"Green fluorescence."},
+      {v:"Yellow", h:"Yellow fluorescence."},
+      {v:"Orange", h:"Orange fluorescence."},
+      {v:"Pink", h:"Pink fluorescence."},
+      {v:"Other", h:"Use notes to describe."},
+    ]
+  },
+  { key:"odour", title:"Odour", subtitle:"Use the notes box to describe smell in your own words, or leave blank if not checked.", type:"notes_only" },
   {
     key:"specimen_collection",
     title:"Specimen Collection",
@@ -1080,7 +1215,7 @@ const BRACKET = [
       {v:"Stipitate polypore", h:"Has a stem."},
       {v:"Imbricate", h:"Overlapping shelves."},
     ]},
-  { key:"bracket_margin", title:"Margin Type", subtitle:"Edge of the bracket (important in polypores).", type:"options",
+  { key:"bracket_margin", title:"Margin Type", subtitle:"Edge of the bracket, important in polypores.", type:"options",
     options:[
       {v:"Rounded", h:"Thick rounded edge."},
       {v:"Acute / thin", h:"Thin sharp margin."},
@@ -1100,7 +1235,7 @@ const BRACKET = [
   { key:"bracket_colour", title:"Upper Surface Colour", subtitle:"Select colour(s).", type:"palette", multi:true },
   { key:"pore_shape", title:"Pores Characteristics (Shape)", subtitle:"Shape of pores underneath.", type:"options",
     options:[ {v:"Round",h:"Circular pores."},{v:"Angular",h:"Polygon/angular pores."},{v:"Elongated",h:"Stretched/maze-like pores."} ] },
-  { key:"pore_density", title:"Pore Size / Density", subtitle:"How fine the pores are (often counted as pores per mm).", type:"options",
+  { key:"pore_density", title:"Pore Size / Density", subtitle:"How fine the pores are, often counted as pores per mm.", type:"options",
     options:[
       {v:"Very fine (not individually visible)", h:"Typically >8 pores per mm."},
       {v:"Fine", h:"About 6–8 pores per mm."},
@@ -1154,8 +1289,15 @@ const CORAL = [
       {v:"Not sure", h:"Use notes."},
     ]},
   { key:"coral_colour", title:"Colour", subtitle:"Select colour(s).", type:"palette", multi:true },
-  { key:"bruising", title:"Bruising / Staining", subtitle:"Colour change when handled/cut.", type:"options", multi:true,
-    options:[ {v:"Blue",h:"Turns blue."},{v:"Red",h:"Turns red."},{v:"Yellow",h:"Turns yellow."},{v:"Brown",h:"Turns brown."},{v:"None",h:"No bruising."} ] },
+  { key:"bruising", title:"Bruising / Staining Colour", subtitle:"Colour change when handled or cut.", type:"options", multi:true,
+    options:[
+      {v:"Blue",h:"Turns blue."},
+      {v:"Green",h:"Turns green."},
+      {v:"Red",h:"Turns red."},
+      {v:"Yellow",h:"Turns yellow."},
+      {v:"Brown",h:"Turns brown."},
+      {v:"None",h:"No bruising."}
+    ] },
   { key:"guttation", title:"Guttation", subtitle:"Does it exude droplets?", type:"options",
     options:[ {v:"Present",h:"Droplets present."},{v:"Absent",h:"No droplets."},{v:"Not sure",h:"Use notes."} ] },
   {
@@ -1176,7 +1318,7 @@ const PUFFBALL = [
       {v:"Earthball-like", h:"Thick rind, often more firm."},
       {v:"Not sure", h:"Use notes."},
     ]},
-  { key:"peridium", title:"Peridium Structure", subtitle:"Outer ‘skin’ structure (important).", type:"options",
+  { key:"peridium", title:"Peridium Structure", subtitle:"Outer skin structure, important.", type:"options",
     options:[
       {v:"Thin & smooth", h:"Smooth thin skin."},
       {v:"Thick & tough", h:"Thicker leathery rind."},
@@ -1212,12 +1354,12 @@ const PUFFBALL = [
 ];
 
 const STINKHORN = [
-  { key:"egg_present", title:"Egg Stage Present?", subtitle:"Many stinkhorns start as an ‘egg’.", type:"options",
+  { key:"egg_present", title:"Egg Stage Present?", subtitle:"Many stinkhorns start as an egg.", type:"options",
     options:[ {v:"Yes",h:"Egg present/observed."},{v:"No",h:"Only mature form observed."},{v:"Not sure",h:"Use notes."} ] },
   { key:"stink_form", title:"Receptacle Form", subtitle:"Mature shape/form.", type:"options",
     options:[
       {v:"Phalloid (classic stinkhorn)", h:"Column with cap."},
-      {v:"Cage / lattice", h:"Cage-like structure (Clathrus-style)."},
+      {v:"Cage / lattice", h:"Cage-like structure."},
       {v:"Columnar / branched", h:"Columns/branches."},
       {v:"Not sure", h:"Use notes."},
     ]},
@@ -1239,13 +1381,13 @@ const CUPS_JELLIES = [
   { key:"cup_form", title:"Body Type", subtitle:"Choose the best match.", type:"options",
     options:[
       {v:"Cup / disc (apothecium)", h:"Cup/disc with exposed spore surface."},
-      {v:"Saddle / flask-like (perithecium)", h:"Saddle/flask forms (incl. some Helvella-like)."},
+      {v:"Saddle / flask-like (perithecium)", h:"Saddle/flask forms."},
       {v:"Closed / brain-like (cleistothecial-like)", h:"Closed/brain-like ascomycete forms."},
       {v:"Stromatic (embedded in tissue)", h:"Embedded in a stroma/tissue."},
       {v:"Jelly", h:"Gelatinous blob/ear."},
       {v:"Not sure", h:"Use notes."},
     ]},
-  { key:"cup_margin", title:"Margin Type", subtitle:"Edge of cup/disc (if applicable).", type:"options",
+  { key:"cup_margin", title:"Margin Type", subtitle:"Edge of cup/disc, if applicable.", type:"options",
     options:[
       {v:"Even", h:"Smooth margin."},
       {v:"Wavy / undulate", h:"Wavy edge."},
@@ -1380,6 +1522,87 @@ function isLastStep(){
   return state.stepIndex >= flow.length - 1;
 }
 
+function hasPositiveBruising(){
+  const vals = getArray("bruising");
+  return vals.some(v => v !== "None");
+}
+
+function isSectionHidden(secKey){
+  if(secKey === "uv_part" || secKey === "uv_colour"){
+    return getSingle("uv_reaction") !== "Present";
+  }
+  if(secKey === "soil_type"){
+    return !getArray("substrate").includes("Soil");
+  }
+  if(secKey === "bruising_speed"){
+    return !hasPositiveBruising();
+  }
+  if(secKey === "annulus_state"){
+    const pv = getSingle("partial_veil");
+    return !pv || pv === "None observed";
+  }
+  return false;
+}
+
+function pruneDependentSelections(){
+  if(isSectionHidden("uv_part")){
+    state.selections["uv_part"] = [];
+    delete state.notes["uv_part"];
+  }
+  if(isSectionHidden("uv_colour")){
+    state.selections["uv_colour"] = [];
+    delete state.notes["uv_colour"];
+  }
+  if(isSectionHidden("soil_type")){
+    state.selections["soil_type"] = [];
+    delete state.notes["soil_type"];
+  }
+  if(isSectionHidden("bruising_speed")){
+    state.selections["bruising_speed"] = [];
+    delete state.notes["bruising_speed"];
+  }
+  if(isSectionHidden("annulus_state")){
+    state.selections["annulus_state"] = [];
+    delete state.notes["annulus_state"];
+  }
+}
+
+function findNextVisibleIndex(fromIndex){
+  const flow = getFlow();
+  for(let i = fromIndex + 1; i < flow.length; i++){
+    if(!isSectionHidden(flow[i].key)) return i;
+  }
+  return fromIndex;
+}
+
+function findPrevVisibleIndex(fromIndex){
+  const flow = getFlow();
+  for(let i = fromIndex - 1; i >= 0; i--){
+    if(!isSectionHidden(flow[i].key)) return i;
+  }
+  return fromIndex;
+}
+
+function normaliseCurrentStep(){
+  const flow = getFlow();
+  if(!flow.length){
+    state.stepIndex = 0;
+    return;
+  }
+  if(state.stepIndex > flow.length - 1) state.stepIndex = flow.length - 1;
+  if(state.stepIndex < 0) state.stepIndex = 0;
+
+  if(isSectionHidden(flow[state.stepIndex].key)){
+    const nextIdx = findNextVisibleIndex(state.stepIndex);
+    if(nextIdx !== state.stepIndex){
+      state.stepIndex = nextIdx;
+      return;
+    }
+    const prevIdx = findPrevVisibleIndex(state.stepIndex);
+    state.stepIndex = prevIdx;
+  }
+}
+
 /* =========================
    RENDERING
 ========================= */
@@ -1404,21 +1627,11 @@ function begin(){
 }
 
 function render(){
+  pruneDependentSelections();
+  normaliseCurrentStep();
+
   const sec = currentSection();
   if(!sec) return;
-
-  if(sec.key === "volva"){
-    const pv = getSingle("partial_veil");
-    if(pv === "Cortina" || pv === "Remnants only"){
-      state.skipped.add("volva");
-      state.selections["volva"] = [];
-      if(!isLastStep()){
-        state.stepIndex++;
-        render();
-        return;
-      }
-    }
-  }
 
   document.getElementById("sectionTitle").innerText = sec.title;
   document.getElementById("sectionSubtitle").innerText = sec.subtitle || "";
@@ -1514,7 +1727,7 @@ function renderGeneral(){
 
   const gpsStatus = document.createElement("div");
   gpsStatus.className = "gpsStatus";
-  gpsStatus.textContent = state.gpsStatus || "You can enter a written location and optionally add GPS coordinates.";
+  gpsStatus.textContent = state.gpsStatus || "";
   gpsBlock.appendChild(gpsStatus);
 
   wrapper.appendChild(gpsBlock);
@@ -1579,11 +1792,12 @@ function renderOptions(key, options, multi){
     d.onclick = () => {
       toggleSelection(key, opt.v, multi);
 
-      if(key === "fungus_type" || key === "hymenium_type"){
+      if(key === "fungus_type" || key === "hymenium_type" || key === "substrate" || key === "bruising" || key === "partial_veil"){
         pruneInvalidSelections();
         clampStepIndex();
       }
 
+      pruneDependentSelections();
       render();
     };
 
@@ -1702,24 +1916,21 @@ function skipSection(){
   saveNotes();
   state.skipped.add(sec.key);
   state.selections[sec.key] = [];
-
-  if(!isLastStep()){
-    state.stepIndex++;
-    render();
-  }
+  state.stepIndex = findNextVisibleIndex(state.stepIndex);
+  render();
 }
 
 function nextSection(){
   saveNotes();
   if(isLastStep()) return;
-  state.stepIndex++;
+  state.stepIndex = findNextVisibleIndex(state.stepIndex);
   render();
 }
 
 function prevSection(){
   saveNotes();
   if(state.stepIndex === 0) return;
-  state.stepIndex--;
+  state.stepIndex = findPrevVisibleIndex(state.stepIndex);
   render();
 }
 
@@ -1842,8 +2053,9 @@ function showOutput(text){
 }
 
 function currentOutputOrList(){
-  const current = safeTrim(document.getElementById("output").textContent || "");
-  if(current) return current;
+  const raw = safeTrim(document.getElementById("output").textContent || "");
+  const cleaned = safeTrim(raw.replace(/\n*\s*Saved to Foray Log ✅\s*$/, ""));
+  if(cleaned) return cleaned;
   return generateListDescription();
 }
 
@@ -1943,6 +2155,7 @@ function habitatPhrase(value){
     case "Dry sclerophyll": return "dry sclerophyll forest";
     case "Wet sclerophyll": return "wet sclerophyll forest";
     case "Rainforest": return "rainforest";
+    case "Cloud rainforest": return "cloud rainforest";
     case "Pine forest": return "pine forest";
     case "Coastal heath": return "coastal heath";
     case "Urban": return "urban habitat";
@@ -1958,7 +2171,10 @@ function substratePhrase(value){
 
 function buildHabitatSentence(){
   const habitat = getSelections("habitat").map(habitatPhrase);
-  const substrate = getSelections("substrate").map(substratePhrase);
+  const substrate = getSelections("substrate");
+  const substrateLower = substrate.map(substratePhrase);
+  const soilSelections = getSelections("soil_type");
+  const soilType = soilSelections.length ? lowerFirst(soilSelections[0]) : "";
   const trees = safeTrim(state.textInputs["trees"] || "");
   const g = state.textInputs.general || {};
   const location = safeTrim(g.location || "");
@@ -1966,7 +2182,16 @@ function buildHabitatSentence(){
 
   const parts = [];
 
-  if(substrate.length) parts.push(`on ${joinHuman(substrate)}`);
+  if(substrate.length){
+    if(substrate.includes("Soil") && soilType){
+      parts.push(`from ${soilType} soil`);
+    } else if(substrate.includes("Soil")){
+      parts.push(`from soil`);
+    } else {
+      parts.push(`on ${joinHuman(substrateLower)}`);
+    }
+  }
+
   if(habitat.length) parts.push(`in ${joinHuman(habitat)}`);
   if(trees) parts.push(`near ${trees}`);
   if(location) parts.push(`at ${location}`);
@@ -1979,28 +2204,122 @@ function buildHabitatSentence(){
 function specimenCollectionSentence(){
   const collected = getSelections("specimen_collection");
   if(!collected.length) return "";
-  return collected[0] === "Yes" ? "Specimen collected." : "Specimen not collected.";
+  return collected[0] === "Yes" ? "Specimen collected." : "";
 }
 
 function bruisingSentence(){
-  const bruising = lowerSelections("bruising").filter(v => v !== "none");
-  if(!bruising.length) return "";
+  const vals = getSelections("bruising");
+  if(!vals.length) return "";
+  const bruising = vals.map(lowerFirst);
   return sentence(`Bruising/staining ${joinHuman(bruising)}`);
 }
 
-function veilPhrase(){
-  const partialVeil = getSelections("partial_veil");
-  const volva = getSelections("volva");
-  const parts = [];
+function bruisingSpeedSentence(){
+  const speed = getSelections("bruising_speed");
+  if(!speed.length || speed[0] === "Not observed") return "";
+  return sentence(`Bruising reaction ${lowerFirst(speed[0])}`);
+}
 
-  if(partialVeil.length && partialVeil[0] !== "None"){
-    parts.push(`partial veil ${lowerFirst(partialVeil[0])}`);
+function stipeBasePhrase(){
+  const base = getSelections("stipe_base_shape");
+  if(!base.length) return "";
+
+  const v = base[0];
+
+  switch(v){
+    case "Equal": return "stipe base equal";
+    case "Slightly swollen": return "stipe base slightly swollen";
+    case "Clavate": return "stipe base clavate";
+    case "Bulbous": return "stipe base bulbous";
+    case "Abruptly bulbous": return "stipe base abruptly bulbous";
+    case "Marginate bulb": return "stipe base with a marginate bulb";
+    case "Rooting / tapering": return "stipe base rooting or tapering";
+    case "Not observed": return "";
+    default: return `stipe base ${lowerFirst(v)}`;
   }
-  if(volva.length && volva[0] !== "None"){
-    parts.push(`volva ${lowerFirst(volva[0])}`);
+}
+
+function stipeSurfacePhrase(){
+  const vals = getSelections("stipe_surface");
+  if(!vals.length) return "";
+
+  const mapped = vals.map(v => {
+    if(v === "Cortina remnants") return "with cortina remnants";
+    if(v === "Squamules above annular zone") return "with squamules above annular zone";
+    return lowerFirst(v);
+  });
+
+  return joinHuman(mapped);
+}
+
+function partialVeilPhrase(){
+  const pv = getSelections("partial_veil");
+  if(!pv.length || pv[0] === "None observed") return "";
+
+  switch(pv[0]){
+    case "Cortina": return "partial veil cortinate";
+    case "Membranous veil": return "partial veil membranous";
+    case "Fragile veil": return "partial veil fragile";
+    case "Remnants only": return "partial veil represented only by remnants";
+    default: return `partial veil ${lowerFirst(pv[0])}`;
   }
+}
+
+function annulusPhrase(){
+  const ann = getSelections("annulus_state");
+  if(!ann.length || ann[0] === "Not observed") return "";
+
+  switch(ann[0]){
+    case "Persistent annulus": return "persistent annulus";
+    case "Floppy annulus": return "floppy annulus";
+    case "Cogwheel annulus": return "cogwheel annulus";
+    case "Striate annulus": return "striate annulus";
+    case "Annular zone only": return "annular zone only";
+    case "Exannulate": return "exannulate";
+    default: return lowerFirst(ann[0]);
+  }
+}
+
+function volvaPhrase(){
+  const volva = getSelections("volva");
+  if(!volva.length) return "";
+  return `volva ${lowerFirst(volva[0])}`;
+}
+
+function veilPhrase(){
+  const parts = [];
+  const pv = partialVeilPhrase();
+  const ann = annulusPhrase();
+  const vv = volvaPhrase();
+
+  if(pv) parts.push(pv);
+  if(ann) parts.push(ann);
+  if(vv) parts.push(vv);
 
   return joinHuman(parts);
+}
+
+function uvSentence(){
+  const uv = getSelections("uv_reaction");
+  if(!uv.length) return "";
+
+  const uvVal = uv[0];
+  if(uvVal === "Absent") return "No fluorescence observed under UV.";
+  if(uvVal === "Not tested") return "";
+
+  const parts = getSelections("uv_part").filter(v => v !== "Other").map(lowerFirst);
+  const colours = getSelections("uv_colour").filter(v => v !== "Other").map(lowerFirst);
+
+  if(parts.length && colours.length){
+    return sentence(`${joinHuman(parts)} fluorescing ${joinHuman(colours)} under UV`);
+  }
+  if(parts.length){
+    return sentence(`${joinHuman(parts)} fluorescing under UV`);
+  }
+  if(colours.length){
+    return sentence(`Fluorescence ${joinHuman(colours)} under UV`);
+  }
+  return "Fluorescence observed under UV.";
 }
 
 function lamellulaePhrase(){
@@ -2011,26 +2330,23 @@ function lamellulaePhrase(){
   return "";
 }
 
+function lamellaeEdgePhrase(){
+  const vals = getSelections("lam_edge").filter(v => v !== "Not observed");
+  if(!vals.length) return "";
+  return `edges ${joinHuman(vals.map(lowerFirst))}`;
+}
+
 function lamellaeFeaturePhrase(){
   const feats = getSelections("lam_features");
   if(!feats.length) return "";
 
   const parts = [];
-  const hasMarginate = feats.includes("Marginate");
-  const hasSerrate = feats.includes("Serrate edge");
-
-  if(hasMarginate || hasSerrate){
-    const edgeBits = [];
-    if(hasMarginate) edgeBits.push("marginate");
-    if(hasSerrate) edgeBits.push("serrate");
-    parts.push(`edge ${joinHuman(edgeBits)}`);
-  }
-
   if(feats.includes("Anastomosing")) parts.push("lamellae anastomosing");
   if(feats.includes("Intervenose")) parts.push("with intervenose connections");
   if(feats.includes("Forked (furcate)")) parts.push("with forked lamellae");
   if(feats.includes("Pseudogills (ridges)")) parts.push("appearing as pseudogills");
   if(feats.includes("Inaequihymeniiferous")) parts.push("mottled from uneven spore release");
+  if(feats.includes("Lamellulae present")) parts.push("lamellulae present");
 
   return joinHuman(parts);
 }
@@ -2041,7 +2357,7 @@ function buildAdditionalNotesSentence(excludeKeys = []){
 
   for(const sec of flow){
     const note = getNote(sec.key);
-    if(note && !excludeKeys.includes(sec.key)){
+    if(note && !excludeKeys.includes(sec.key) && !isSectionHidden(sec.key)){
       extraNotes.push(note);
     }
   }
@@ -2054,28 +2370,18 @@ function isNegativeSelectionValue(key, value){
   const v = safeTrim(value);
   if(!v) return true;
 
-  const exactNegative = new Set([
-    "None",
-    "No",
-    "Other",
-    "Absent",
-    "Not sure",
-    "Unsure",
-    "Not applicable",
-    "Not seen",
-    "Not checked",
-    "No opening observed",
-    "Absent / not obvious"
-  ]);
-
-  if(exactNegative.has(v)) return true;
-  if(v.startsWith("No ")) return true;
-  if(v.startsWith("Not ")) return true;
+  if(v === "Other") return true;
+  if(v === "Not applicable") return true;
+  if((key === "volva" || key === "bruising") && v === "None") return true;
+  if(key === "bruising_speed" && v === "Not observed") return true;
+  if(key === "uv_reaction" && v === "Not tested") return true;
+  if(key === "specimen_collection" && v === "No") return true;
+  if(key === "annulus_state" && v === "Not observed") return true;
 
   return false;
 }
 
-function getPositiveSelectionsForList(key){
+function getListSelections(key){
   return getArray(key).filter(v => !isNegativeSelectionValue(key, v));
 }
 
@@ -2085,6 +2391,7 @@ function getPositiveSelectionsForList(key){
 
 function generateListDescription(){
   saveNotes();
+  pruneDependentSelections();
 
   let lines = [];
 
@@ -2104,9 +2411,9 @@ function generateListDescription(){
     seen.add(sec.key);
 
     if(sec.key === "general") continue;
+    if(isSectionHidden(sec.key)) continue;
 
     if(sec.type === "text"){
-      if(state.skipped.has(sec.key)) continue;
       const v = safeTrim(state.textInputs[sec.key] || "");
       const note = safeTrim(state.notes[sec.key] || "");
       if(isEmpty(v) && isEmpty(note)) continue;
@@ -2118,7 +2425,6 @@ function generateListDescription(){
     }
 
     if(sec.type === "measure_mm"){
-      if(state.skipped.has(sec.key)) continue;
       const m = state.textInputs[sec.key] || {};
       const min = safeTrim(m.min || "");
       const max = safeTrim(m.max || "");
@@ -2138,7 +2444,6 @@ function generateListDescription(){
     }
 
     if(sec.type === "notes_only"){
-      if(state.skipped.has(sec.key)) continue;
       const note = safeTrim(state.notes[sec.key] || "");
       if(isEmpty(note)) continue;
       lines.push(`${sec.title}: ${note}`);
@@ -2146,10 +2451,10 @@ function generateListDescription(){
       continue;
     }
 
-    const sel = getPositiveSelectionsForList(sec.key);
+    const sel = getListSelections(sec.key);
+    const note = safeTrim(state.notes[sec.key] || "");
 
-    if(state.skipped.has(sec.key) || !sel.length){
-      const note = safeTrim(state.notes[sec.key] || "");
+    if(!sel.length){
       if(!isEmpty(note)){
         lines.push(`${sec.title}: ${note}`);
         lines.push("");
@@ -2162,7 +2467,6 @@ function generateListDescription(){
       val = formatCapShapePreview() || val;
     }
 
-    const note = safeTrim(state.notes[sec.key] || "");
     const suffix = note ? `. ${note}` : "";
     lines.push(`${sec.title}: ${val}${suffix}`);
     lines.push("");
@@ -2222,6 +2526,9 @@ function buildMushroomWrittenDescription(){
     else if(young) lamBits.push(young);
     else if(mature) lamBits.push(mature);
 
+    const lamEdge = lamellaeEdgePhrase();
+    if(lamEdge) lamBits.push(lamEdge);
+
     const lamFeat = lamellaeFeaturePhrase();
     if(lamFeat) lamBits.push(lamFeat);
 
@@ -2263,12 +2570,22 @@ function buildMushroomWrittenDescription(){
   const stipeBits = [];
   const stipeLen = measurementText("stipe_length");
   if(stipeLen) stipeBits.push(`Stipe ${stipeLen} long`);
+
   const stipePosition = lowerSelections("stipe_position");
   if(stipePosition.length) stipeBits.push(joinHuman(stipePosition));
+
   const stipeColour = formatColourPhraseFromKey("stipe_colour");
   if(stipeColour) stipeBits.push(stipeColour);
+
+  const stipeBase = stipeBasePhrase();
+  if(stipeBase) stipeBits.push(stipeBase);
+
+  const stipeSurface = stipeSurfacePhrase();
+  if(stipeSurface) stipeBits.push(stipeSurface);
+
   const veil = veilPhrase();
   if(veil) stipeBits.push(veil);
+
   addSentence(paragraphs, stipeBits.join(", "));
 
   const spore = getSelections("spore_print");
@@ -2279,8 +2596,14 @@ function buildMushroomWrittenDescription(){
   const bruise = bruisingSentence();
   if(bruise) paragraphs.push(bruise);
 
+  const bruiseSpeed = bruisingSpeedSentence();
+  if(bruiseSpeed) paragraphs.push(bruiseSpeed);
+
   const odour = getNote("odour");
   if(odour) addSentence(paragraphs, `Odour ${odour}`);
+
+  const uv = uvSentence();
+  if(uv) paragraphs.push(uv);
 
   const habitat = buildHabitatSentence();
   if(habitat) paragraphs.push(sentence(habitat));
@@ -2326,6 +2649,8 @@ function buildBracketWrittenDescription(){
   const guttation = getSelections("guttation");
   if(guttation.length && guttation[0] === "Present"){
     paragraphs.push("Guttation present.");
+  } else if(guttation.length && guttation[0] === "Absent"){
+    paragraphs.push("Guttation absent.");
   }
 
   const habitat = buildHabitatSentence();
@@ -2380,6 +2705,8 @@ function buildCoralWrittenDescription(){
   const guttation = getSelections("guttation");
   if(guttation.length && guttation[0] === "Present"){
     paragraphs.push("Guttation present.");
+  } else if(guttation.length && guttation[0] === "Absent"){
+    paragraphs.push("Guttation absent.");
   }
 
   const habitat = buildHabitatSentence();
@@ -2491,7 +2818,8 @@ function buildCupsJelliesWrittenDescription(){
     if(jelly && jelly !== "Not applicable") second.push(`consistency ${lowerFirst(jelly)}`);
     if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
     addSentence(paragraphs, second.join(", "));
-  } else {
+  }
+  else if(form === "Cup / disc (apothecium)"){
     addSentence(paragraphs, "Fruiting bodies cupulate or discoid");
 
     const second = [];
@@ -2500,6 +2828,38 @@ function buildCupsJelliesWrittenDescription(){
     if(outside) second.push(`outer surface ${outside}`);
     if(texture && texture !== "Not sure") second.push(lowerFirst(texture));
     addSentence(paragraphs, second.join(", "));
+  }
+  else if(form === "Saddle / flask-like (perithecium)"){
+    const bits = ["Fruiting bodies saddle-like or flask-like"];
+    if(outside) bits.push(outside);
+    addSentence(paragraphs, bits.join(", "));
+
+    const second = [];
+    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(inside) second.push(`spore-bearing surface ${inside}`);
+    addSentence(paragraphs, second.join(", "));
+  }
+  else if(form === "Closed / brain-like (cleistothecial-like)"){
+    const bits = ["Fruiting bodies closed or brain-like"];
+    if(outside) bits.push(outside);
+    addSentence(paragraphs, bits.join(", "));
+
+    const second = [];
+    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    addSentence(paragraphs, second.join(", "));
+  }
+  else if(form === "Stromatic (embedded in tissue)"){
+    const bits = ["Fruiting bodies stromatic"];
+    if(outside) bits.push(outside);
+    addSentence(paragraphs, bits.join(", "));
+
+    const second = [];
+    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(inside) second.push(`spore-bearing surface ${inside}`);
+    addSentence(paragraphs, second.join(", "));
+  }
+  else {
+    addSentence(paragraphs, "Fruiting bodies of uncertain cup, disc, jelly, or related form");
   }
 
   const habitat = buildHabitatSentence();
@@ -2562,6 +2922,7 @@ function buildMorelsWrittenDescription(){
 
 function generateWrittenDescription(){
   saveNotes();
+  pruneDependentSelections();
 
   const type = getSingle("fungus_type");
   if(!type){
@@ -2749,7 +3110,7 @@ function exportForayLog(){
     navigator.clipboard.writeText(text).then(()=>{
       alert("Export copied to clipboard ✅");
     }).catch(()=>{
-      alert("Could not copy. You can still select & copy from the log entries.");
+      alert("Could not copy. You can still select and copy from the log entries.");
     });
   } else {
     alert("Clipboard not available on this device/browser.");

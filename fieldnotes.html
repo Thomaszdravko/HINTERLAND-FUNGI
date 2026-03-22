@@ -462,14 +462,14 @@
 
   .appFooter{
     display:flex;
-    justify-content: space-between;
-    align-items:center;
+    justify-content: flex-start;
+    align-items:flex-end;
     gap: 14px;
     margin-top: 18px;
     padding-top: 10px;
     font-size: 12px;
     color: var(--accent);
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
   .appFooter a{
@@ -479,6 +479,19 @@
 
   .appFooter a:hover{
     opacity: 0.9;
+  }
+
+  .footerLogo{
+    width: 52px;
+    height: auto;
+    display: block;
+    flex: 0 0 auto;
+  }
+
+  .footerText{
+    flex: 1;
+    min-width: 0;
+    text-align: right;
   }
 </style>
 </head>
@@ -567,8 +580,11 @@
   </div>
 
   <div class="appFooter">
-    <div>© 2026 Hinterland Fungi. All rights reserved.</div>
-    <div><a href="https://www.hinterlandfungi.com" target="_blank" rel="noopener noreferrer">Back to main page</a></div>
+    <img src="IMG_1678.png" alt="Hinterland Fungi logo" class="footerLogo">
+    <div class="footerText">
+      <div>© 2026 Hinterland Fungi. All rights reserved.</div>
+      <div><a href="https://www.hinterlandfungi.com" target="_blank" rel="noopener noreferrer">Back to main page</a></div>
+    </div>
   </div>
 </div>
 
@@ -672,7 +688,6 @@ const UNIVERSAL_ENV = [
       {v:"Dry sclerophyll", h:"Open eucalypt woodland; drier understory."},
       {v:"Wet sclerophyll", h:"Taller eucalypt forest; moister gullies."},
       {v:"Rainforest", h:"Closed canopy; humid and shaded."},
-      {v:"Cloud rainforest", h:"Cool, wet upland rainforest, often mossy."},
       {v:"Pine forest", h:"Plantation or wild pines nearby."},
       {v:"Coastal heath", h:"Low shrubs; sandy coastal soils."},
       {v:"Urban", h:"Gardens, parks, mulch beds, lawns."},
@@ -1498,21 +1513,38 @@ function isLastStep(){
 }
 
 function isSectionHidden(secKey){
+  if(secKey === "soil_type"){
+    return getSingle("substrate") !== "Soil";
+  }
+
+  if(secKey === "annulus_state"){
+    const partialVeil = getSingle("partial_veil");
+    return !partialVeil || partialVeil === "None observed";
+  }
+
+  if(secKey === "bruising_speed"){
+    const bruising = getArray("bruising");
+    return !bruising.length || bruising.includes("None");
+  }
+
   if(secKey === "uv_part" || secKey === "uv_colour"){
     return getSingle("uv_reaction") !== "Present";
   }
+
   return false;
 }
 
+function clearHiddenSection(key){
+  if(key in state.selections) state.selections[key] = [];
+  if(key in state.textInputs) delete state.textInputs[key];
+  if(key in state.notes) delete state.notes[key];
+  state.skipped.delete(key);
+}
+
 function pruneDependentSelections(){
-  if(isSectionHidden("uv_part")){
-    state.selections["uv_part"] = [];
-    delete state.notes["uv_part"];
-  }
-  if(isSectionHidden("uv_colour")){
-    state.selections["uv_colour"] = [];
-    delete state.notes["uv_colour"];
-  }
+  ["soil_type", "annulus_state", "bruising_speed", "uv_part", "uv_colour"].forEach(key => {
+    if(isSectionHidden(key)) clearHiddenSection(key);
+  });
 }
 
 function findNextVisibleIndex(fromIndex){
@@ -1863,7 +1895,13 @@ function skipSection(){
   if(!sec) return;
   saveNotes();
   state.skipped.add(sec.key);
-  state.selections[sec.key] = [];
+
+  if(sec.type === "text"){
+    delete state.textInputs[sec.key];
+  } else {
+    state.selections[sec.key] = [];
+  }
+
   state.stepIndex = findNextVisibleIndex(state.stepIndex);
   render();
 }
@@ -2007,10 +2045,6 @@ function currentOutputOrList(){
   return generateListDescription();
 }
 
-function getSelections(key){
-  return getArray(key).filter(v => v !== "None" && v !== "Not applicable");
-}
-
 function getNote(key){
   return safeTrim(state.notes[key] || "");
 }
@@ -2018,6 +2052,40 @@ function getNote(key){
 function lowerFirst(str){
   if(!str) return "";
   return str.charAt(0).toLowerCase() + str.slice(1);
+}
+
+function isNegativeSelectionValue(key, value){
+  const v = safeTrim(value);
+  if(!v) return true;
+
+  if(key === "annulus_state" && v === "Exannulate") return false;
+  if(key === "lamellulae" && v === "Absent / not obvious") return false;
+
+  const exactNegative = new Set([
+    "No",
+    "None",
+    "None observed",
+    "Absent",
+    "Not applicable",
+    "Not observed",
+    "Not tested",
+    "Not seen",
+    "Not checked",
+    "Not sure",
+    "Unsure",
+    "No opening observed",
+    "Other"
+  ]);
+
+  if(exactNegative.has(v)) return true;
+  if(v.startsWith("No ")) return true;
+  if(v.startsWith("Not ")) return true;
+
+  return false;
+}
+
+function getSelections(key){
+  return getArray(key).filter(v => !isNegativeSelectionValue(key, v));
 }
 
 function lowerSelections(key){
@@ -2103,7 +2171,6 @@ function habitatPhrase(value){
     case "Dry sclerophyll": return "dry sclerophyll forest";
     case "Wet sclerophyll": return "wet sclerophyll forest";
     case "Rainforest": return "rainforest";
-    case "Cloud rainforest": return "cloud rainforest";
     case "Pine forest": return "pine forest";
     case "Coastal heath": return "coastal heath";
     case "Urban": return "urban habitat";
@@ -2151,20 +2218,18 @@ function buildHabitatSentence(){
 function specimenCollectionSentence(){
   const collected = getSelections("specimen_collection");
   if(!collected.length) return "";
-  return collected[0] === "Yes" ? "Specimen collected." : "Specimen not collected.";
+  return collected[0] === "Yes" ? "Specimen collected." : "";
 }
 
 function bruisingSentence(){
-  const vals = getSelections("bruising");
-  if(!vals.length) return "";
-  if(vals.includes("None")) return "No bruising/staining observed.";
-  const bruising = vals.map(lowerFirst);
+  const bruising = lowerSelections("bruising");
+  if(!bruising.length) return "";
   return sentence(`Bruising/staining ${joinHuman(bruising)}`);
 }
 
 function bruisingSpeedSentence(){
   const speed = getSelections("bruising_speed");
-  if(!speed.length || speed[0] === "Not observed") return "";
+  if(!speed.length) return "";
   return sentence(`Bruising reaction ${lowerFirst(speed[0])}`);
 }
 
@@ -2182,7 +2247,6 @@ function stipeBasePhrase(){
     case "Abruptly bulbous": return "stipe base abruptly bulbous";
     case "Marginate bulb": return "stipe base with a marginate bulb";
     case "Rooting / tapering": return "stipe base rooting or tapering";
-    case "Not observed": return "";
     default: return `stipe base ${lowerFirst(v)}`;
   }
 }
@@ -2202,7 +2266,7 @@ function stipeSurfacePhrase(){
 
 function partialVeilPhrase(){
   const pv = getSelections("partial_veil");
-  if(!pv.length || pv[0] === "None observed") return "";
+  if(!pv.length) return "";
 
   switch(pv[0]){
     case "Cortina": return "partial veil cortinate";
@@ -2215,7 +2279,7 @@ function partialVeilPhrase(){
 
 function annulusPhrase(){
   const ann = getSelections("annulus_state");
-  if(!ann.length || ann[0] === "Not observed") return "";
+  if(!ann.length) return "";
 
   switch(ann[0]){
     case "Persistent annulus": return "persistent annulus";
@@ -2231,7 +2295,6 @@ function annulusPhrase(){
 function volvaPhrase(){
   const volva = getSelections("volva");
   if(!volva.length) return "";
-  if(volva[0] === "None") return "volva absent";
   return `volva ${lowerFirst(volva[0])}`;
 }
 
@@ -2252,10 +2315,6 @@ function uvSentence(){
   const uv = getSelections("uv_reaction");
   if(!uv.length) return "";
 
-  const uvVal = uv[0];
-  if(uvVal === "Absent") return "No fluorescence observed under UV.";
-  if(uvVal === "Not tested") return "";
-
   const parts = getSelections("uv_part").filter(v => v !== "Other").map(lowerFirst);
   const colours = getSelections("uv_colour").filter(v => v !== "Other").map(lowerFirst);
 
@@ -2275,12 +2334,12 @@ function lamellulaePhrase(){
   const val = getSelections("lamellulae")[0] || "";
   if(val === "Present (few)") return "with few lamellulae";
   if(val === "Present (many)") return "with many lamellulae";
-  if(val === "Unsure") return "lamellulae uncertain";
+  if(val === "Absent / not obvious") return "lamellulae absent or not obvious";
   return "";
 }
 
 function lamellaeEdgePhrase(){
-  const vals = getSelections("lam_edge").filter(v => v !== "Not observed");
+  const vals = getSelections("lam_edge");
   if(!vals.length) return "";
   return `edges ${joinHuman(vals.map(lowerFirst))}`;
 }
@@ -2315,18 +2374,8 @@ function buildAdditionalNotesSentence(excludeKeys = []){
   return sentence(`Additional notes: ${extraNotes.join("; ")}`);
 }
 
-function isNegativeSelectionValue(key, value){
-  const v = safeTrim(value);
-  if(!v) return true;
-
-  if(v === "Other") return true;
-  if(v === "Not applicable") return true;
-
-  return false;
-}
-
 function getListSelections(key){
-  return getArray(key).filter(v => !isNegativeSelectionValue(key, v));
+  return getSelections(key);
 }
 
 /* =========================
@@ -2533,7 +2582,7 @@ function buildMushroomWrittenDescription(){
   addSentence(paragraphs, stipeBits.join(", "));
 
   const spore = getSelections("spore_print");
-  if(spore.length && spore[0] !== "Other"){
+  if(spore.length){
     addSentence(paragraphs, `Spore print ${lowerFirst(spore[0])}`);
   }
 
@@ -2593,8 +2642,6 @@ function buildBracketWrittenDescription(){
   const guttation = getSelections("guttation");
   if(guttation.length && guttation[0] === "Present"){
     paragraphs.push("Guttation present.");
-  } else if(guttation.length && guttation[0] === "Absent"){
-    paragraphs.push("Guttation absent.");
   }
 
   const habitat = buildHabitatSentence();
@@ -2624,21 +2671,21 @@ function buildCoralWrittenDescription(){
     addSentence(paragraphs, bits.join(", "));
 
     const second = [];
-    if(branching && branching !== "Not sure") second.push(`branching ${lowerFirst(branching)}`);
-    if(tips && tips !== "Not sure") second.push(`tips ${lowerFirst(tips)}`);
-    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(branching) second.push(`branching ${lowerFirst(branching)}`);
+    if(tips) second.push(`tips ${lowerFirst(tips)}`);
+    if(texture) second.push(`surface ${lowerFirst(texture)}`);
     addSentence(paragraphs, second.join(", "));
   } else {
     const bits = [];
-    if(form && form !== "Not sure") bits.push(lowerFirst(form));
+    if(form) bits.push(lowerFirst(form));
     if(bits.length){
       addSentence(paragraphs, `Fruiting bodies ${bits.join(", ")}`);
     }
 
     const second = [];
-    if(branching && branching !== "Not sure") second.push(`branching ${lowerFirst(branching)}`);
-    if(tips && tips !== "Not sure") second.push(`branch tips ${lowerFirst(tips)}`);
-    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(branching) second.push(`branching ${lowerFirst(branching)}`);
+    if(tips) second.push(`branch tips ${lowerFirst(tips)}`);
+    if(texture) second.push(`surface ${lowerFirst(texture)}`);
     if(colour) second.push(colour);
     addSentence(paragraphs, second.join(", "));
   }
@@ -2649,8 +2696,6 @@ function buildCoralWrittenDescription(){
   const guttation = getSelections("guttation");
   if(guttation.length && guttation[0] === "Present"){
     paragraphs.push("Guttation present.");
-  } else if(guttation.length && guttation[0] === "Absent"){
-    paragraphs.push("Guttation absent.");
   }
 
   const habitat = buildHabitatSentence();
@@ -2676,7 +2721,7 @@ function buildPuffballWrittenDescription(){
   addSentence(paragraphs, introBits.length ? `Fruiting bodies ${introBits.join(", ")}` : "");
 
   const peridium = getSelections("peridium");
-  if(peridium.length && peridium[0] !== "Not sure"){
+  if(peridium.length){
     addSentence(paragraphs, `Peridium ${lowerFirst(peridium[0])}`);
   }
 
@@ -2708,17 +2753,15 @@ function buildStinkhornWrittenDescription(){
   const egg = getSelections("egg_present");
   if(egg.length && egg[0] === "Yes"){
     paragraphs.push("Fruiting bodies arising from an egg stage.");
-  } else {
-    paragraphs.push("Fruiting bodies observed in mature condition.");
   }
 
   const form = getSelections("stink_form");
-  if(form.length && form[0] !== "Not sure"){
+  if(form.length){
     addSentence(paragraphs, `Receptacle ${lowerFirst(form[0])}`);
   }
 
   const gleba = getSelections("gleba_colour");
-  if(gleba.length && gleba[0] !== "Not seen"){
+  if(gleba.length){
     addSentence(paragraphs, `Gleba ${lowerFirst(gleba[0])}`);
   }
 
@@ -2726,9 +2769,8 @@ function buildStinkhornWrittenDescription(){
   if(odour) addSentence(paragraphs, `Odour ${odour}`);
 
   const volva = getSelections("volva");
-  if(volva.length){
-    if(volva[0] === "Present") addSentence(paragraphs, "Egg remnant present at the base");
-    else if(volva[0] === "Absent") addSentence(paragraphs, "Egg remnant not observed at the base");
+  if(volva.length && volva[0] === "Present"){
+    addSentence(paragraphs, "Egg remnant present at the base");
   }
 
   const habitat = buildHabitatSentence();
@@ -2759,18 +2801,18 @@ function buildCupsJelliesWrittenDescription(){
     addSentence(paragraphs, introBits.join(", "));
 
     const second = [];
-    if(jelly && jelly !== "Not applicable") second.push(`consistency ${lowerFirst(jelly)}`);
-    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(jelly) second.push(`consistency ${lowerFirst(jelly)}`);
+    if(texture) second.push(`surface ${lowerFirst(texture)}`);
     addSentence(paragraphs, second.join(", "));
   }
   else if(form === "Cup / disc (apothecium)"){
     addSentence(paragraphs, "Fruiting bodies cupulate or discoid");
 
     const second = [];
-    if(margin && margin !== "Not applicable") second.push(`margin ${lowerFirst(margin)}`);
+    if(margin) second.push(`margin ${lowerFirst(margin)}`);
     if(inside) second.push(`inner surface ${inside}`);
     if(outside) second.push(`outer surface ${outside}`);
-    if(texture && texture !== "Not sure") second.push(lowerFirst(texture));
+    if(texture) second.push(lowerFirst(texture));
     addSentence(paragraphs, second.join(", "));
   }
   else if(form === "Saddle / flask-like (perithecium)"){
@@ -2779,7 +2821,7 @@ function buildCupsJelliesWrittenDescription(){
     addSentence(paragraphs, bits.join(", "));
 
     const second = [];
-    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(texture) second.push(`surface ${lowerFirst(texture)}`);
     if(inside) second.push(`spore-bearing surface ${inside}`);
     addSentence(paragraphs, second.join(", "));
   }
@@ -2789,7 +2831,7 @@ function buildCupsJelliesWrittenDescription(){
     addSentence(paragraphs, bits.join(", "));
 
     const second = [];
-    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(texture) second.push(`surface ${lowerFirst(texture)}`);
     addSentence(paragraphs, second.join(", "));
   }
   else if(form === "Stromatic (embedded in tissue)"){
@@ -2798,7 +2840,7 @@ function buildCupsJelliesWrittenDescription(){
     addSentence(paragraphs, bits.join(", "));
 
     const second = [];
-    if(texture && texture !== "Not sure") second.push(`surface ${lowerFirst(texture)}`);
+    if(texture) second.push(`surface ${lowerFirst(texture)}`);
     if(inside) second.push(`spore-bearing surface ${inside}`);
     addSentence(paragraphs, second.join(", "));
   }
@@ -2823,18 +2865,18 @@ function buildMorelsWrittenDescription(){
 
   const introBits = [];
   const mType = getSelections("morel_type");
-  if(mType.length && mType[0] !== "Not sure"){
+  if(mType.length){
     introBits.push(lowerFirst(mType[0]));
   }
   addSentence(paragraphs, introBits.length ? `Fruiting bodies ${introBits.join(", ")}` : "");
 
   const formBits = [];
   const relation = getSelections("cap_stipe_relation");
-  if(relation.length && relation[0] !== "Not sure"){
+  if(relation.length){
     formBits.push(`cap–stipe relationship ${lowerFirst(relation[0])}`);
   }
   const surface = getSelections("morel_surface");
-  if(surface.length && surface[0] !== "Not sure"){
+  if(surface.length){
     formBits.push(`surface ${lowerFirst(surface[0])}`);
   }
   const colour = formatColourPhraseFromKey("morel_colour");

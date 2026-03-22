@@ -235,14 +235,26 @@
     font-size: 14px;
   }
 
-  input[type="date"]{
-    width:100%;
-    max-width:100%;
-    min-width:0;
-    display:block;
-    appearance: none;
-    -webkit-appearance: none;
-  }
+input[type="date"]{
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+  height: 48px;
+  padding: 11px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(0,0,0,0.35);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.2;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+input[type="date"]::-webkit-date-and-time-value{
+  text-align: left;
+}
 
   textarea{
     min-height: 82px;

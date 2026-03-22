@@ -235,26 +235,26 @@
     font-size: 14px;
   }
 
-input[type="date"]{
-  width: 100%;
-  max-width: 100%;
-  min-width: 0;
-  display: block;
-  height: 48px;
-  padding: 11px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgba(0,0,0,0.35);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.2;
-  appearance: none;
-  -webkit-appearance: none;
-}
+  input[type="date"]{
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    display: block;
+    height: 48px;
+    padding: 11px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(0,0,0,0.35);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.2;
+    appearance: none;
+    -webkit-appearance: none;
+  }
 
-input[type="date"]::-webkit-date-and-time-value{
-  text-align: left;
-}
+  input[type="date"]::-webkit-date-and-time-value{
+    text-align: left;
+  }
 
   textarea{
     min-height: 82px;
@@ -302,7 +302,7 @@ input[type="date"]::-webkit-date-and-time-value{
     z-index: 30;
   }
   .startCard{
-    width: min(520px, 92vw);
+    width: min(560px, 92vw);
     background: rgba(20,20,20,0.92);
     border: 1px solid var(--border);
     border-radius: 18px;
@@ -315,10 +315,40 @@ input[type="date"]::-webkit-date-and-time-value{
     display:block;
     margin: 6px auto 10px auto;
   }
+  .startWelcome{
+    color: var(--text);
+    font-size: 20px;
+    font-weight: 800;
+    line-height: 1.25;
+    margin-bottom: 8px;
+  }
   .startHint{
     color: var(--muted);
     font-size: 13px;
     margin-bottom: 14px;
+    line-height: 1.35;
+  }
+  .startLearnMore{
+    margin-top: 10px;
+  }
+  .startLearnMoreLink{
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+  .startLearnMoreLink:hover{
+    color: var(--accent2);
+    text-decoration: underline;
+  }
+  .modeBtns{
+    display:grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 12px;
+  }
+  @media (max-width: 520px){
+    .modeBtns{ grid-template-columns: 1fr; }
   }
 
   .paletteWrap{
@@ -362,14 +392,16 @@ input[type="date"]::-webkit-date-and-time-value{
   }
 
   .modal{
-    position: fixed; inset: 0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding: 18px;
-    background: rgba(0,0,0,0.70);
-    z-index: 20;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+    color: white;
+    padding: 24px;
   }
+
   .modalCard{
     width: min(880px, 94vw);
     max-height: min(82vh, 820px);
@@ -379,6 +411,7 @@ input[type="date"]::-webkit-date-and-time-value{
     border-radius: 18px;
     padding: 14px;
   }
+
   .modalHead{
     display:flex;
     align-items:center;
@@ -393,6 +426,58 @@ input[type="date"]::-webkit-date-and-time-value{
     letter-spacing: 1px;
     font-size: 14px;
   }
+
+  .terms-modal-content{
+    background: rgba(24,24,24,0.97);
+    color: var(--text);
+    margin: 6% auto;
+    padding: 24px;
+    border-radius: 12px;
+    width: min(92%, 980px);
+    text-align: left;
+    position: relative;
+    border: 1px solid var(--border);
+  }
+
+  .terms-modal-content h2,
+  .terms-modal-content h3{
+    text-align: center;
+    color: var(--accent);
+    margin-top: 0;
+  }
+
+  .terms-modal-content p{
+    margin: 10px 0;
+    color: var(--text);
+    line-height: 1.5;
+  }
+
+  .field-notes-modal-content p{
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+
+  .field-notes-modal-content p:last-child{
+    margin-bottom: 0;
+  }
+
+  .close{
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    color: inherit;
+    font-size: 32px;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .close:hover,
+  .close:focus{
+    color: #bbb;
+    text-decoration: none;
+  }
+
   .logItem{
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -513,8 +598,15 @@ input[type="date"]::-webkit-date-and-time-value{
 <div class="start" id="start">
   <div class="startCard">
     <img src="SIX_23C2F4BF-4216-4448-9422-E561138A1CF5.png" alt="Logo" />
-    <div class="startHint">Document a fungus observation step-by-step.</div>
-    <button class="btn primary" onclick="begin()">Begin</button>
+    <div class="startWelcome">Welcome to Fungi Field Notes.</div>
+    <div class="startHint">Choose your observation mode to begin.</div>
+    <div class="modeBtns">
+      <button class="btn primary" onclick="begin('basic')">Basic Mode</button>
+      <button class="btn secondary" onclick="begin('advanced')">Advanced Mode</button>
+    </div>
+    <div class="startLearnMore">
+      <a href="#" class="startLearnMoreLink" onclick="showFieldNotesModal(); return false;"><b>Learn more</b></a>
+    </div>
   </div>
 </div>
 
@@ -530,7 +622,7 @@ input[type="date"]::-webkit-date-and-time-value{
 </div>
 
 <div class="modal" id="forayModal">
-  <div class="modalCard">
+  <div class="modalCard" style="margin: 6% auto;">
     <div class="modalHead">
       <h3 class="modalTitle">Foray Log</h3>
       <button class="btn secondary smallBtn" onclick="closeForayLog()">Close</button>
@@ -542,6 +634,18 @@ input[type="date"]::-webkit-date-and-time-value{
     </div>
 
     <div id="forayList"></div>
+  </div>
+</div>
+
+<div id="field-notes-modal" class="modal">
+  <div class="terms-modal-content field-notes-modal-content">
+    <span class="close" onclick="closeFieldNotesModal()">&times;</span>
+    <h2>About</h2>
+    <p>Fungi Field Notes is designed to help beginners, seasoned field researchers, and everyone in between by replacing paper observation sheets with a convenient digital observation tool. It guides users step by step through the process of documenting the macro characteristics and supporting information needed for a proper scientific description, then automatically generates either a detailed list description or a polished written description that can be saved to a foray log or exported to iNaturalist.</p>
+    <p>Because the information is recorded in a clear, structured way, it is far easier to compare against fungal keys and reference material than rough handwritten notes or photo-only observations. It is useful for mycological societies and forays, as an educational tool, or simply for the fungi nerd who wants to level up their observation skills. Because so many fungi remain undocumented or poorly documented, this kind of structured field data can be extremely valuable.</p>
+    <p>You can also save Fungi Field Notes to your phone like an app for quick access in the field.</p>
+    <p><strong>On iPhone or iPad:</strong> open it in Safari, tap the Share button, then choose Add to Home Screen.<br><strong>On Android:</strong> open it in Chrome, tap the menu, then choose Add to Home screen or Install app.</p>
+    <p>Fungi Field Notes is currently in beta testing, and community feedback is very welcome. If you notice bugs, missing features, awkward wording, or have ideas for improvement, we would love to hear from you.</p>
   </div>
 </div>
 
@@ -607,6 +711,7 @@ input[type="date"]::-webkit-date-and-time-value{
 
 const state = {
   stepIndex: 0,
+  mode: "",
   selections: {},
   textInputs: {},
   notes: {},
@@ -617,7 +722,7 @@ const state = {
 const isEmpty = (v) => v == null || (typeof v === "string" && v.trim() === "");
 const safeTrim = (v) => (v || "").trim();
 
-const FORAY_STORAGE_KEY = "mushroom_foray_log_v2";
+const FORAY_STORAGE_KEY = "mushroom_foray_log_v3";
 
 let confirmCallback = null;
 
@@ -746,7 +851,7 @@ const UNIVERSAL_ENV = [
 ];
 
 /* =========================
-   MUSHROOM (CAP+STEM) PATHWAY
+   ADVANCED MUSHROOM PATHWAY
 ========================= */
 
 const MUSHROOM_PRE = [
@@ -1204,10 +1309,6 @@ const MUSHROOM_COMMON = [
   }
 ];
 
-/* =========================
-   OTHER TYPE-SPECIFIC PATHWAYS
-========================= */
-
 const BRACKET = [
   { key:"bracket_form", title:"Bracket Form", subtitle:"Overall form of the bracket/polypore.", type:"options",
     options:[
@@ -1460,6 +1561,98 @@ const MORELS = [
   }
 ];
 
+const BASIC_MUSHROOM_PRE = [
+  MUSHROOM_PRE.find(s => s.key === "growth_habit"),
+  MUSHROOM_PRE.find(s => s.key === "cap_colour"),
+  MUSHROOM_PRE.find(s => s.key === "cap_diameter"),
+  MUSHROOM_PRE.find(s => s.key === "cap_shape"),
+  MUSHROOM_PRE.find(s => s.key === "hymenium_type"),
+];
+
+const BASIC_LAM = [
+  LAM.find(s => s.key === "lam_attach"),
+  LAM.find(s => s.key === "lam_spacing"),
+  LAM.find(s => s.key === "lam_young_colour"),
+];
+
+const BASIC_POR = [
+  POR.find(s => s.key === "pore_shape"),
+  POR.find(s => s.key === "pore_density"),
+];
+
+const BASIC_TEETH = [
+  TEETH.find(s => s.key === "teeth_form"),
+  TEETH.find(s => s.key === "teeth_colour"),
+];
+
+const BASIC_RIDGES = [
+  RIDGES.find(s => s.key === "ridge_desc"),
+  RIDGES.find(s => s.key === "ridge_colour"),
+];
+
+const BASIC_MUSHROOM_COMMON = [
+  MUSHROOM_COMMON.find(s => s.key === "stipe_colour"),
+  MUSHROOM_COMMON.find(s => s.key === "stipe_length"),
+  MUSHROOM_COMMON.find(s => s.key === "stipe_position"),
+  MUSHROOM_COMMON.find(s => s.key === "stipe_base_shape"),
+  MUSHROOM_COMMON.find(s => s.key === "partial_veil"),
+  MUSHROOM_COMMON.find(s => s.key === "volva"),
+  MUSHROOM_COMMON.find(s => s.key === "bruising"),
+  MUSHROOM_COMMON.find(s => s.key === "odour"),
+  MUSHROOM_COMMON.find(s => s.key === "specimen_collection"),
+];
+
+const BASIC_BRACKET = [
+  BRACKET.find(s => s.key === "bracket_form"),
+  BRACKET.find(s => s.key === "bracket_colour"),
+  BRACKET.find(s => s.key === "bracket_surface"),
+  BRACKET.find(s => s.key === "pore_shape"),
+  BRACKET.find(s => s.key === "pore_density"),
+  BRACKET.find(s => s.key === "pore_colour"),
+  BRACKET.find(s => s.key === "specimen_collection"),
+];
+
+const BASIC_CORAL = [
+  CORAL.find(s => s.key === "coral_form"),
+  CORAL.find(s => s.key === "coral_colour"),
+  CORAL.find(s => s.key === "coral_branching"),
+  CORAL.find(s => s.key === "bruising"),
+  CORAL.find(s => s.key === "specimen_collection"),
+];
+
+const BASIC_PUFFBALL = [
+  PUFFBALL.find(s => s.key === "puff_form"),
+  PUFFBALL.find(s => s.key === "puff_surface_colour"),
+  PUFFBALL.find(s => s.key === "peridium"),
+  PUFFBALL.find(s => s.key === "gleba"),
+  PUFFBALL.find(s => s.key === "specimen_collection"),
+];
+
+const BASIC_STINKHORN = [
+  STINKHORN.find(s => s.key === "egg_present"),
+  STINKHORN.find(s => s.key === "stink_form"),
+  STINKHORN.find(s => s.key === "gleba_colour"),
+  STINKHORN.find(s => s.key === "odour"),
+  STINKHORN.find(s => s.key === "volva"),
+  STINKHORN.find(s => s.key === "specimen_collection"),
+];
+
+const BASIC_CUPS_JELLIES = [
+  CUPS_JELLIES.find(s => s.key === "cup_form"),
+  CUPS_JELLIES.find(s => s.key === "cup_inside_colour"),
+  CUPS_JELLIES.find(s => s.key === "cup_outside_colour"),
+  CUPS_JELLIES.find(s => s.key === "cup_texture"),
+  CUPS_JELLIES.find(s => s.key === "specimen_collection"),
+];
+
+const BASIC_MORELS = [
+  MORELS.find(s => s.key === "morel_type"),
+  MORELS.find(s => s.key === "morel_colour"),
+  MORELS.find(s => s.key === "stipe_colour"),
+  MORELS.find(s => s.key === "stipe_length"),
+  MORELS.find(s => s.key === "specimen_collection"),
+];
+
 /* =========================
    FLOW COMPUTATION
 ========================= */
@@ -1481,35 +1674,44 @@ function getFlow(){
   flow.push(...UNIVERSAL_ENV);
 
   const type = getSingle("fungus_type");
+  const basic = state.mode === "basic";
 
   if(type === "Mushrooms"){
-    flow.push(...MUSHROOM_PRE);
-
-    const hym = getSingle("hymenium_type");
-    if(hym === "Lamellae") flow.push(...LAM);
-    if(hym === "Pores/Tubes") flow.push(...POR);
-    if(hym === "Teeth/Spines") flow.push(...TEETH);
-    if(hym === "Ridges/Folds") flow.push(...RIDGES);
-
-    flow.push(...MUSHROOM_COMMON);
+    if(basic){
+      flow.push(...BASIC_MUSHROOM_PRE);
+      const hym = getSingle("hymenium_type");
+      if(hym === "Lamellae") flow.push(...BASIC_LAM);
+      if(hym === "Pores/Tubes") flow.push(...BASIC_POR);
+      if(hym === "Teeth/Spines") flow.push(...BASIC_TEETH);
+      if(hym === "Ridges/Folds") flow.push(...BASIC_RIDGES);
+      flow.push(...BASIC_MUSHROOM_COMMON);
+    } else {
+      flow.push(...MUSHROOM_PRE);
+      const hym = getSingle("hymenium_type");
+      if(hym === "Lamellae") flow.push(...LAM);
+      if(hym === "Pores/Tubes") flow.push(...POR);
+      if(hym === "Teeth/Spines") flow.push(...TEETH);
+      if(hym === "Ridges/Folds") flow.push(...RIDGES);
+      flow.push(...MUSHROOM_COMMON);
+    }
   }
   else if(type === "Bracket / Polypore"){
-    flow.push(...BRACKET);
+    flow.push(...(basic ? BASIC_BRACKET : BRACKET));
   }
   else if(type === "Coral / Club / Icicle"){
-    flow.push(...CORAL);
+    flow.push(...(basic ? BASIC_CORAL : CORAL));
   }
   else if(type === "Puffball / Earthball"){
-    flow.push(...PUFFBALL);
+    flow.push(...(basic ? BASIC_PUFFBALL : PUFFBALL));
   }
   else if(type === "Stinkhorn / Cage fungus"){
-    flow.push(...STINKHORN);
+    flow.push(...(basic ? BASIC_STINKHORN : STINKHORN));
   }
   else if(type === "Cups / Discs / Jellies"){
-    flow.push(...CUPS_JELLIES);
+    flow.push(...(basic ? BASIC_CUPS_JELLIES : CUPS_JELLIES));
   }
   else if(type === "Morels & allies"){
-    flow.push(...MORELS);
+    flow.push(...(basic ? BASIC_MORELS : MORELS));
   }
 
   return flow;
@@ -1536,7 +1738,7 @@ function isSectionHidden(secKey){
 
   if(secKey === "bruising_speed"){
     const bruising = getArray("bruising");
-    return !bruising.length || bruising.includes("None");
+    return !bruising.length || bruising.includes("None") || state.mode === "basic";
   }
 
   if(secKey === "uv_part" || secKey === "uv_colour"){
@@ -1599,7 +1801,8 @@ function normaliseCurrentStep(){
    RENDERING
 ========================= */
 
-function begin(){
+function begin(mode){
+  state.mode = mode || "advanced";
   document.getElementById("start").style.display = "none";
 
   if(!state.textInputs.general){
@@ -1954,6 +2157,7 @@ function startAgain(){
       if(!ok) return;
 
       state.stepIndex = 0;
+      state.mode = "";
       state.selections = {};
       state.textInputs = {};
       state.notes = {};
@@ -2307,6 +2511,7 @@ function annulusPhrase(){
 function volvaPhrase(){
   const volva = getSelections("volva");
   if(!volva.length) return "";
+  if(volva[0] === "Present") return "volva present";
   return `volva ${lowerFirst(volva[0])}`;
 }
 
@@ -2406,6 +2611,7 @@ function generateListDescription(){
   if(!isEmpty(g.specimen_number)) lines.push(`Specimen number: ${safeTrim(g.specimen_number)}`);
   if(!isEmpty(g.location)) lines.push(`Location: ${safeTrim(g.location)}`);
   if(!isEmpty(g.gps_coordinates)) lines.push(`GPS coordinates: ${safeTrim(g.gps_coordinates)}`);
+  if(!isEmpty(state.mode)) lines.push(`Mode: ${state.mode === "basic" ? "Basic" : "Advanced"}`);
   if(lines.length) lines.push("");
 
   const flow = getFlow();
@@ -2483,7 +2689,7 @@ function generateListDescription(){
 }
 
 /* =========================
-   TYPE-SPECIFIC WRITTEN DESCRIPTION
+   ADVANCED WRITTEN DESCRIPTIONS
 ========================= */
 
 function buildMushroomWrittenDescription(){
@@ -2915,6 +3121,256 @@ function buildMorelsWrittenDescription(){
 }
 
 /* =========================
+   BASIC WRITTEN DESCRIPTIONS
+========================= */
+
+function buildBasicMushroomWrittenDescription(){
+  const paragraphs = [];
+
+  const intro = [];
+  const growth = lowerSelections("growth_habit");
+  if(growth.length) intro.push(joinHuman(growth));
+  addSentence(paragraphs, intro.length ? `Fruiting bodies ${intro.join(", ")}` : "");
+
+  const capBits = [];
+  const capSize = measurementText("cap_diameter", "", true);
+  if(capSize) capBits.push(`Cap ${capSize}`);
+  const capShape = formatCapShapePreview();
+  if(capShape) capBits.push(capShape);
+  const capColour = formatColourPhraseFromKey("cap_colour");
+  if(capColour) capBits.push(capColour);
+  addSentence(paragraphs, capBits.join(", "));
+
+  const hym = getSingle("hymenium_type");
+  if(hym === "Lamellae"){
+    const bits = ["Underside with gills"];
+    const attach = getSelections("lam_attach");
+    if(attach.length) bits.push(lowerFirst(attach[0]));
+    const spacing = getSelections("lam_spacing");
+    if(spacing.length) bits.push(lowerFirst(spacing[0]));
+    const gillColour = formatColourPhraseFromKey("lam_young_colour");
+    if(gillColour) bits.push(gillColour);
+    addSentence(paragraphs, bits.join(", "));
+  }
+  else if(hym === "Pores/Tubes"){
+    const bits = ["Underside poroid"];
+    const shape = getSelections("pore_shape");
+    if(shape.length) bits.push(lowerFirst(shape[0]));
+    const density = getSelections("pore_density");
+    if(density.length) bits.push(lowerFirst(density[0]));
+    addSentence(paragraphs, bits.join(", "));
+  }
+  else if(hym === "Teeth/Spines"){
+    const bits = ["Underside with teeth or spines"];
+    const form = getSelections("teeth_form");
+    if(form.length) bits.push(lowerFirst(form[0]));
+    const colour = formatColourPhraseFromKey("teeth_colour");
+    if(colour) bits.push(colour);
+    addSentence(paragraphs, bits.join(", "));
+  }
+  else if(hym === "Ridges/Folds"){
+    const bits = ["Underside with ridges or folds"];
+    const desc = getSelections("ridge_desc");
+    if(desc.length) bits.push(lowerFirst(desc[0]));
+    const colour = formatColourPhraseFromKey("ridge_colour");
+    if(colour) bits.push(colour);
+    addSentence(paragraphs, bits.join(", "));
+  }
+
+  const stemBits = [];
+  const stipeLen = measurementText("stipe_length");
+  if(stipeLen) stemBits.push(`Stem ${stipeLen} long`);
+  const stipePosition = lowerSelections("stipe_position");
+  if(stipePosition.length) stemBits.push(joinHuman(stipePosition));
+  const stipeColour = formatColourPhraseFromKey("stipe_colour");
+  if(stipeColour) stemBits.push(stipeColour);
+  const stipeBase = stipeBasePhrase();
+  if(stipeBase) stemBits.push(stipeBase);
+  const veil = veilPhrase();
+  if(veil) stemBits.push(veil);
+  addSentence(paragraphs, stemBits.join(", "));
+
+  const bruise = bruisingSentence();
+  if(bruise) paragraphs.push(bruise);
+
+  const odour = getNote("odour");
+  if(odour) addSentence(paragraphs, `Odour ${odour}`);
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+
+  const extraNotes = buildAdditionalNotesSentence(["odour"]);
+  if(extraNotes) paragraphs.push(extraNotes);
+
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBasicBracketWrittenDescription(){
+  const paragraphs = [];
+  const intro = [];
+  const form = getSelections("bracket_form");
+  if(form.length) intro.push(lowerFirst(form[0]));
+  addSentence(paragraphs, intro.length ? `Fruiting bodies ${intro.join(", ")}` : "");
+
+  const upper = [];
+  const colour = formatColourPhraseFromKey("bracket_colour");
+  if(colour) upper.push(`upper surface ${colour}`);
+  const surface = getSelections("bracket_surface");
+  if(surface.length) upper.push(lowerFirst(surface[0]));
+  addSentence(paragraphs, upper.join(", "));
+
+  const pores = [];
+  const shape = getSelections("pore_shape");
+  if(shape.length) pores.push(`pores ${lowerFirst(shape[0])}`);
+  const density = getSelections("pore_density");
+  if(density.length) pores.push(lowerFirst(density[0]));
+  const poreColour = formatColourPhraseFromKey("pore_colour");
+  if(poreColour) pores.push(`pore surface ${poreColour}`);
+  addSentence(paragraphs, pores.join(", "));
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBasicCoralWrittenDescription(){
+  const paragraphs = [];
+  const intro = [];
+  const form = getSelections("coral_form");
+  if(form.length) intro.push(lowerFirst(form[0]));
+  const colour = formatColourPhraseFromKey("coral_colour");
+  if(colour) intro.push(colour);
+  addSentence(paragraphs, intro.length ? `Fruiting bodies ${intro.join(", ")}` : "");
+
+  const branch = getSelections("coral_branching");
+  if(branch.length) addSentence(paragraphs, `Branching ${lowerFirst(branch[0])}`);
+
+  const bruise = bruisingSentence();
+  if(bruise) paragraphs.push(bruise);
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBasicPuffballWrittenDescription(){
+  const paragraphs = [];
+  const intro = [];
+  const form = getSelections("puff_form");
+  if(form.length) intro.push(lowerFirst(form[0]));
+  const colour = formatColourPhraseFromKey("puff_surface_colour");
+  if(colour) intro.push(colour);
+  addSentence(paragraphs, intro.length ? `Fruiting bodies ${intro.join(", ")}` : "");
+
+  const surf = getSelections("peridium");
+  if(surf.length) addSentence(paragraphs, `Surface ${lowerFirst(surf[0])}`);
+
+  const gleba = getSelections("gleba");
+  if(gleba.length) addSentence(paragraphs, `Inside ${lowerFirst(gleba[0])}`);
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBasicStinkhornWrittenDescription(){
+  const paragraphs = [];
+  const egg = getSelections("egg_present");
+  if(egg.length && egg[0] === "Yes") paragraphs.push("Egg stage observed.");
+
+  const form = getSelections("stink_form");
+  if(form.length) addSentence(paragraphs, `Mature form ${lowerFirst(form[0])}`);
+
+  const gleba = getSelections("gleba_colour");
+  if(gleba.length) addSentence(paragraphs, `Slime ${lowerFirst(gleba[0])}`);
+
+  const odour = getNote("odour");
+  if(odour) addSentence(paragraphs, `Odour ${odour}`);
+
+  const volva = getSelections("volva");
+  if(volva.length && volva[0] === "Present") addSentence(paragraphs, "Egg remnant present at the base");
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+  const extraNotes = buildAdditionalNotesSentence(["odour"]);
+  if(extraNotes) paragraphs.push(extraNotes);
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBasicCupsJelliesWrittenDescription(){
+  const paragraphs = [];
+  const intro = [];
+  const form = getSelections("cup_form");
+  if(form.length) intro.push(lowerFirst(form[0]));
+  addSentence(paragraphs, intro.length ? `Fruiting bodies ${intro.join(", ")}` : "");
+
+  const inside = formatColourPhraseFromKey("cup_inside_colour");
+  const outside = formatColourPhraseFromKey("cup_outside_colour");
+  const texture = getSelections("cup_texture");
+  const bits = [];
+  if(inside) bits.push(`inner surface ${inside}`);
+  if(outside) bits.push(`outer surface ${outside}`);
+  if(texture.length) bits.push(lowerFirst(texture[0]));
+  addSentence(paragraphs, bits.join(", "));
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+function buildBasicMorelsWrittenDescription(){
+  const paragraphs = [];
+  const intro = [];
+  const form = getSelections("morel_type");
+  if(form.length) intro.push(lowerFirst(form[0]));
+  const colour = formatColourPhraseFromKey("morel_colour");
+  if(colour) intro.push(colour);
+  addSentence(paragraphs, intro.length ? `Fruiting bodies ${intro.join(", ")}` : "");
+
+  const stemBits = [];
+  const stipeLen = measurementText("stipe_length");
+  if(stipeLen) stemBits.push(`Stem ${stipeLen} long`);
+  const stipeColour = formatColourPhraseFromKey("stipe_colour");
+  if(stipeColour) stemBits.push(stipeColour);
+  addSentence(paragraphs, stemBits.join(", "));
+
+  const habitat = buildHabitatSentence();
+  if(habitat) paragraphs.push(sentence(habitat));
+  const extraNotes = buildAdditionalNotesSentence([]);
+  if(extraNotes) paragraphs.push(extraNotes);
+  const collected = specimenCollectionSentence();
+  if(collected) paragraphs.push(collected);
+
+  return paragraphs.filter(Boolean).join("\n\n").trim();
+}
+
+/* =========================
    WRITTEN DESCRIPTION
 ========================= */
 
@@ -2929,14 +3385,25 @@ function generateWrittenDescription(){
   }
 
   let out = "";
+  const basic = state.mode === "basic";
 
-  if(type === "Mushrooms") out = buildMushroomWrittenDescription();
-  else if(type === "Bracket / Polypore") out = buildBracketWrittenDescription();
-  else if(type === "Coral / Club / Icicle") out = buildCoralWrittenDescription();
-  else if(type === "Puffball / Earthball") out = buildPuffballWrittenDescription();
-  else if(type === "Stinkhorn / Cage fungus") out = buildStinkhornWrittenDescription();
-  else if(type === "Cups / Discs / Jellies") out = buildCupsJelliesWrittenDescription();
-  else if(type === "Morels & allies") out = buildMorelsWrittenDescription();
+  if(basic){
+    if(type === "Mushrooms") out = buildBasicMushroomWrittenDescription();
+    else if(type === "Bracket / Polypore") out = buildBasicBracketWrittenDescription();
+    else if(type === "Coral / Club / Icicle") out = buildBasicCoralWrittenDescription();
+    else if(type === "Puffball / Earthball") out = buildBasicPuffballWrittenDescription();
+    else if(type === "Stinkhorn / Cage fungus") out = buildBasicStinkhornWrittenDescription();
+    else if(type === "Cups / Discs / Jellies") out = buildBasicCupsJelliesWrittenDescription();
+    else if(type === "Morels & allies") out = buildBasicMorelsWrittenDescription();
+  } else {
+    if(type === "Mushrooms") out = buildMushroomWrittenDescription();
+    else if(type === "Bracket / Polypore") out = buildBracketWrittenDescription();
+    else if(type === "Coral / Club / Icicle") out = buildCoralWrittenDescription();
+    else if(type === "Puffball / Earthball") out = buildPuffballWrittenDescription();
+    else if(type === "Stinkhorn / Cage fungus") out = buildStinkhornWrittenDescription();
+    else if(type === "Cups / Discs / Jellies") out = buildCupsJelliesWrittenDescription();
+    else if(type === "Morels & allies") out = buildMorelsWrittenDescription();
+  }
 
   out = safeTrim(out) || "Not enough information yet to generate a written description.";
   showOutput(out);
@@ -2978,6 +3445,7 @@ function saveToForayLog(){
   const entry = {
     id: String(now.getTime()) + "_" + Math.random().toString(16).slice(2),
     createdAt: now.toISOString(),
+    mode: state.mode || "",
     observer: safeTrim(g.observer_name || ""),
     date: safeTrim(g.date || ""),
     specimenNumber: safeTrim(g.specimen_number || ""),
@@ -2997,11 +3465,13 @@ function saveToForayLog(){
 
 function openForayLog(){
   renderForayLog();
-  document.getElementById("forayModal").style.display = "flex";
+  document.getElementById("forayModal").style.display = "block";
+  document.body.style.overflow = "hidden";
 }
 
 function closeForayLog(){
   document.getElementById("forayModal").style.display = "none";
+  document.body.style.overflow = "";
 }
 
 function renderForayLog(){
@@ -3031,6 +3501,7 @@ function renderForayLog(){
     if(item.specimenNumber) parts.push(`Specimen #: ${item.specimenNumber}`);
     if(item.location) parts.push(`Location: ${item.location}`);
     if(item.gpsCoordinates) parts.push(`GPS: ${item.gpsCoordinates}`);
+    if(item.mode) parts.push(`Mode: ${item.mode === "basic" ? "Basic" : "Advanced"}`);
     if(item.fungusType) parts.push(`Type: ${item.fungusType}`);
     if(item.hymenium) parts.push(`Hymenium: ${item.hymenium}`);
     parts.push(`Saved: ${new Date(item.createdAt).toLocaleString()}`);
@@ -3098,6 +3569,7 @@ function exportForayLog(){
     if(item.specimenNumber) headerParts.push(`Specimen #: ${item.specimenNumber}`);
     if(item.location) headerParts.push(`Location: ${item.location}`);
     if(item.gpsCoordinates) headerParts.push(`GPS: ${item.gpsCoordinates}`);
+    if(item.mode) headerParts.push(`Mode: ${item.mode === "basic" ? "Basic" : "Advanced"}`);
     if(item.fungusType) headerParts.push(`Type: ${item.fungusType}`);
     if(item.hymenium) headerParts.push(`Hymenium: ${item.hymenium}`);
     headerParts.push(`Saved: ${new Date(item.createdAt).toLocaleString()}`);
@@ -3128,11 +3600,47 @@ function clearForayLog(){
 }
 
 /* =========================
+   MODALS
+========================= */
+
+function showFieldNotesModal() {
+  document.getElementById('field-notes-modal').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+
+function closeFieldNotesModal() {
+  document.getElementById('field-notes-modal').style.display = 'none';
+  if (document.getElementById('forayModal').style.display !== 'block') {
+    document.body.style.overflow = '';
+  }
+}
+
+/* =========================
    INIT
 ========================= */
 
 document.getElementById("confirmOverlay").addEventListener("click", (e) => {
   if(e.target.id === "confirmOverlay") closeConfirm(false);
+});
+
+window.onclick = function(event) {
+  var fieldNotesModal = document.getElementById('field-notes-modal');
+  var forayModal = document.getElementById('forayModal');
+
+  if (event.target === fieldNotesModal) {
+    closeFieldNotesModal();
+  }
+
+  if (event.target === forayModal) {
+    closeForayLog();
+  }
+};
+
+window.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    closeFieldNotesModal();
+    closeForayLog();
+  }
 });
 
 render();

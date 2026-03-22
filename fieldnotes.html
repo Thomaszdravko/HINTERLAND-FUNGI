@@ -221,7 +221,6 @@
     font-size: 12px;
     color: var(--muted);
   }
-
   input, textarea, select{
     width: 100%;
     max-width: 100%;
@@ -236,12 +235,6 @@
     font-size: 14px;
   }
 
-  input, select{
-    min-height: 44px;
-    height: 44px;
-    line-height: 1.2;
-  }
-
   input[type="date"]{
     width:100%;
     max-width:100%;
@@ -249,13 +242,6 @@
     display:block;
     appearance: none;
     -webkit-appearance: none;
-    min-height: 44px;
-    height: 44px;
-    line-height: 1.2;
-  }
-
-  input[type="date"]::-webkit-date-and-time-value{
-    text-align: left;
   }
 
   textarea{
@@ -501,8 +487,8 @@
 
 <div class="start" id="start">
   <div class="startCard">
-    <img src="IMG_1678.png" alt="Logo" />
-    <div class="startHint">Document fungi step-by-step.</div>
+    <img src="SIX_23C2F4BF-4216-4448-9422-E561138A1CF5.png" alt="Logo" />
+    <div class="startHint">Document a fungus observation step-by-step.</div>
     <button class="btn primary" onclick="begin()">Begin</button>
   </div>
 </div>
@@ -536,7 +522,7 @@
 
 <div class="top-stack">
   <header class="app-header">
-    <img src="SIX_F4B5FB21-A3A5-4712-B100-3BEF873C9D7E.png" alt="Hinterland Fungi banner">
+    <img src="SIX_7E4FF600-4EF3-4638-9AAA-634276B867F1.png" alt="Hinterland Fungi banner">
   </header>
 
   <div class="sectionBar">
@@ -663,7 +649,7 @@ const GENERAL = [{
 const FUNGUS_TYPE = [{
   key:"fungus_type",
   title:"Fungal Type",
-  subtitle:"Choose the best match.",
+  subtitle:"Choose the best match. This sets a type-specific pathway.",
   type:"options",
   options:[
     {v:"Mushrooms", h:"Cap and stem; gills (agarics), teeth (hydnoid), tubes/pores (boletes)."},
@@ -726,18 +712,9 @@ const UNIVERSAL_ENV = [
   {
     key:"soil_type",
     title:"Soil Type",
-    subtitle:"Optional. Only shown when soil is selected as the substrate.",
-    type:"options",
-    options:[
-      {v:"Rich humus", h:"Dark organic-rich forest soil or humus."},
-      {v:"Loam", h:"Balanced soil with mixed particle sizes."},
-      {v:"Sandy loam", h:"Loam with a higher sand content."},
-      {v:"Sandy", h:"Loose sandy soil."},
-      {v:"Clay", h:"Heavy clay-rich soil."},
-      {v:"Peaty", h:"Organic peaty soil."},
-      {v:"Compacted / disturbed soil", h:"Compacted, trampled, or obviously disturbed ground."},
-      {v:"Other", h:"Use notes to describe."},
-    ]
+    subtitle:"Optional. Use when the fungus is growing from soil.",
+    type:"text",
+    placeholder:"e.g., rich humus, sandy loam, clay, peaty soil"
   },
 ];
 
@@ -825,8 +802,6 @@ const MUSHROOM_PRE = [
       {v:"Verrucose", h:"(warted) Covered in warts/bumps."},
       {v:"Squamulose", h:"(scaly) Small scales on surface."},
       {v:"Fibrillose", h:"(fibrous) Fine fibres/threads visible."},
-      {v:"Floccose", h:"(woolly) Soft woolly or cottony patches on the cap."},
-      {v:"Pulverulent", h:"(powdery) Powdery or dusty coating on the cap."},
       {v:"Rimose", h:"(cracked) Radial cracking, often on dry caps."},
       {v:"Zonate", h:"(zoned) Concentric colour/texture zones/bands."},
     ]
@@ -1192,7 +1167,7 @@ const MUSHROOM_COMMON = [
       {v:"Other", h:"Use notes to describe."},
     ]
   },
-  { key:"odour", title:"Odour", subtitle:"Use the notes box to describe smell in your own words, or leave blank if not checked.", type:"notes_only" },
+  { key:"odour", title:"Odour (Free Text)", subtitle:"Use the notes box to describe smell in your own words, or leave blank if not checked.", type:"notes_only" },
   {
     key:"specimen_collection",
     title:"Specimen Collection",
@@ -1522,24 +1497,9 @@ function isLastStep(){
   return state.stepIndex >= flow.length - 1;
 }
 
-function hasPositiveBruising(){
-  const vals = getArray("bruising");
-  return vals.some(v => v !== "None");
-}
-
 function isSectionHidden(secKey){
   if(secKey === "uv_part" || secKey === "uv_colour"){
     return getSingle("uv_reaction") !== "Present";
-  }
-  if(secKey === "soil_type"){
-    return !getArray("substrate").includes("Soil");
-  }
-  if(secKey === "bruising_speed"){
-    return !hasPositiveBruising();
-  }
-  if(secKey === "annulus_state"){
-    const pv = getSingle("partial_veil");
-    return !pv || pv === "None observed";
   }
   return false;
 }
@@ -1552,18 +1512,6 @@ function pruneDependentSelections(){
   if(isSectionHidden("uv_colour")){
     state.selections["uv_colour"] = [];
     delete state.notes["uv_colour"];
-  }
-  if(isSectionHidden("soil_type")){
-    state.selections["soil_type"] = [];
-    delete state.notes["soil_type"];
-  }
-  if(isSectionHidden("bruising_speed")){
-    state.selections["bruising_speed"] = [];
-    delete state.notes["bruising_speed"];
-  }
-  if(isSectionHidden("annulus_state")){
-    state.selections["annulus_state"] = [];
-    delete state.notes["annulus_state"];
   }
 }
 
@@ -1727,7 +1675,7 @@ function renderGeneral(){
 
   const gpsStatus = document.createElement("div");
   gpsStatus.className = "gpsStatus";
-  gpsStatus.textContent = state.gpsStatus || "";
+  gpsStatus.textContent = state.gpsStatus || "You can enter a written location and optionally add GPS coordinates.";
   gpsBlock.appendChild(gpsStatus);
 
   wrapper.appendChild(gpsBlock);
@@ -1792,7 +1740,7 @@ function renderOptions(key, options, multi){
     d.onclick = () => {
       toggleSelection(key, opt.v, multi);
 
-      if(key === "fungus_type" || key === "hymenium_type" || key === "substrate" || key === "bruising" || key === "partial_veil"){
+      if(key === "fungus_type" || key === "hymenium_type"){
         pruneInvalidSelections();
         clampStepIndex();
       }
@@ -2173,8 +2121,7 @@ function buildHabitatSentence(){
   const habitat = getSelections("habitat").map(habitatPhrase);
   const substrate = getSelections("substrate");
   const substrateLower = substrate.map(substratePhrase);
-  const soilSelections = getSelections("soil_type");
-  const soilType = soilSelections.length ? lowerFirst(soilSelections[0]) : "";
+  const soilType = safeTrim(state.textInputs["soil_type"] || "");
   const trees = safeTrim(state.textInputs["trees"] || "");
   const g = state.textInputs.general || {};
   const location = safeTrim(g.location || "");
@@ -2204,12 +2151,13 @@ function buildHabitatSentence(){
 function specimenCollectionSentence(){
   const collected = getSelections("specimen_collection");
   if(!collected.length) return "";
-  return collected[0] === "Yes" ? "Specimen collected." : "";
+  return collected[0] === "Yes" ? "Specimen collected." : "Specimen not collected.";
 }
 
 function bruisingSentence(){
   const vals = getSelections("bruising");
   if(!vals.length) return "";
+  if(vals.includes("None")) return "No bruising/staining observed.";
   const bruising = vals.map(lowerFirst);
   return sentence(`Bruising/staining ${joinHuman(bruising)}`);
 }
@@ -2283,6 +2231,7 @@ function annulusPhrase(){
 function volvaPhrase(){
   const volva = getSelections("volva");
   if(!volva.length) return "";
+  if(volva[0] === "None") return "volva absent";
   return `volva ${lowerFirst(volva[0])}`;
 }
 
@@ -2372,11 +2321,6 @@ function isNegativeSelectionValue(key, value){
 
   if(v === "Other") return true;
   if(v === "Not applicable") return true;
-  if((key === "volva" || key === "bruising") && v === "None") return true;
-  if(key === "bruising_speed" && v === "Not observed") return true;
-  if(key === "uv_reaction" && v === "Not tested") return true;
-  if(key === "specimen_collection" && v === "No") return true;
-  if(key === "annulus_state" && v === "Not observed") return true;
 
   return false;
 }

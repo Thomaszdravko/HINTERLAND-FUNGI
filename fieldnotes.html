@@ -3425,30 +3425,7 @@ function copyAndOpenINat(){
   if(navigator.clipboard && txt){
     navigator.clipboard.writeText(txt).catch(()=>{});
   }
-
-  const webUrl = "https://www.inaturalist.org/observations/new";
-  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-  if(!isMobile){
-    window.open(webUrl, "_blank");
-    return;
-  }
-
-  const fallbackTimer = setTimeout(() => {
-    window.location.href = webUrl;
-  }, 900);
-
-  try {
-    window.location.href = "inaturalist://";
-  } catch(e) {
-    clearTimeout(fallbackTimer);
-    window.location.href = webUrl;
-  }
-
-  window.addEventListener("pagehide", () => clearTimeout(fallbackTimer), { once: true });
-  document.addEventListener("visibilitychange", () => {
-    if(document.hidden) clearTimeout(fallbackTimer);
-  }, { once: true });
+  window.open("https://www.inaturalist.org/observations/new", "_blank");
 }
 
 /* =========================

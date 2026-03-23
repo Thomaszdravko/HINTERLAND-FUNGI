@@ -400,16 +400,16 @@
     line-height: 1.25;
   }
 
-  .modal{
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    inset: 0;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.9);
-    color: white;
-    padding: 24px;
-  }
+.modal{
+  display: none;
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.9);
+  color: white;
+  padding: 24px;
+}
 
   .modalCard{
     width: min(880px, 94vw);
@@ -519,16 +519,16 @@
     font-weight: 800;
   }
 
-  .confirmOverlay{
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.72);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index: 40;
-    padding: 18px;
-  }
+.confirmOverlay{
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.72);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index: 2100;
+  padding: 18px;
+}
   .confirmCard{
     width:min(460px, 92vw);
     background: rgba(24,24,24,0.96);

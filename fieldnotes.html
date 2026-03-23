@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Fungi Field Notes</title>
 
-<link rel="icon" type="image/png" href="SIX_6F1E7334-7A22-45DE-9A6D-589FB047C943.png" />
-<link rel="shortcut icon" href="SIX_6F1E7334-7A22-45DE-9A6D-589FB047C943.png" />
-<link rel="apple-touch-icon" href="SIX_6F1E7334-7A22-45DE-9A6D-589FB047C943.png" />
+<link rel="icon" type="image/png" href="SIX_1EF7F9E6-22DD-4CEB-AE04-295CEFC10B04.png" />
+<link rel="shortcut icon" href="SIX_1EF7F9E6-22DD-4CEB-AE04-295CEFC10B04.png" />
+<link rel="apple-touch-icon" href="SIX_1EF7F9E6-22DD-4CEB-AE04-295CEFC10B04.png" />
 
 <style>
   :root{
@@ -20,7 +20,7 @@
     --accent2:#9EAF86;
     --border: rgba(255,255,255,0.14);
     --danger:#A76969;
-    --desktop-header-width: 1180px;
+    --desktop-header-width: 860px;
   }
 
   * { box-sizing: border-box; }
@@ -70,7 +70,7 @@
 
   @media only screen and (min-width: 769px){
     .app-header img{
-      width: min(100%, var(--desktop-header-width));
+      width: min(92vw, var(--desktop-header-width));
     }
   }
 
@@ -331,15 +331,8 @@
   .startLearnMore{
     margin-top: 10px;
   }
-  .startLearnMoreLink{
-    color: var(--accent);
-    text-decoration: none;
-    font-size: 0.95rem;
-    font-weight: 700;
-  }
-  .startLearnMoreLink:hover{
-    color: var(--accent2);
-    text-decoration: underline;
+  .startLearnMore .btn{
+    padding: 11px 14px;
   }
   .modeBtns{
     display:grid;
@@ -605,7 +598,7 @@
       <button class="btn secondary" onclick="begin('advanced')">Advanced Mode</button>
     </div>
     <div class="startLearnMore">
-      <a href="#" class="startLearnMoreLink" onclick="showFieldNotesModal(); return false;"><b>Learn more</b></a>
+      <button class="btn secondary" onclick="showFieldNotesModal()">Learn More</button>
     </div>
   </div>
 </div>
@@ -642,6 +635,7 @@
     <span class="close" onclick="closeFieldNotesModal()">&times;</span>
     <h2>About</h2>
     <p>Fungi Field Notes is designed to help beginners, seasoned field researchers, and everyone in between by replacing paper observation sheets with a convenient digital observation tool. It guides users step by step through the process of documenting the macro characteristics and supporting information needed for a proper scientific description, then automatically generates either a detailed list description or a polished written description that can be saved to a foray log or exported to iNaturalist.</p>
+		<p>Fungi Field Notes offers two observation pathways. Basic Mode is a simplified option for beginners, casual users, and quick field observations, focusing on the main visible features. Advanced Mode is designed for more detailed work and includes a broader range of diagnostic characters, making it better suited to careful identification, comparison with keys, and more formal descriptive notes.</p>
     <p>Because the information is recorded in a clear, structured way, it is far easier to compare against fungal keys and reference material than rough handwritten notes or photo-only observations. It is useful for mycological societies and forays, as an educational tool, or simply for the fungi nerd who wants to level up their observation skills. Because so many fungi remain undocumented or poorly documented, this kind of structured field data can be extremely valuable.</p>
     <p>You can also save Fungi Field Notes to your phone like an app for quick access in the field.</p>
     <p><strong>On iPhone or iPad:</strong> open it in Safari, tap the Share button, then choose Add to Home Screen.<br><strong>On Android:</strong> open it in Chrome, tap the menu, then choose Add to Home screen or Install app.</p>
@@ -651,7 +645,7 @@
 
 <div class="top-stack">
   <header class="app-header">
-    <img src="SIX_7E4FF600-4EF3-4638-9AAA-634276B867F1.png" alt="Hinterland Fungi banner">
+    <img src="SIX_FAF197CF-C703-4DE5-99F2-D27EA2A569B1.png" alt="Hinterland Fungi banner">
   </header>
 
   <div class="sectionBar">

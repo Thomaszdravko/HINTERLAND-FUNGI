@@ -744,11 +744,14 @@
   </div>
 
   <div class="appFooter">
-    <img src="IMG_1678.png" alt="Hinterland Fungi logo" class="footerLogo">
-    <div class="footerText">
-      <div>© 2026 Hinterland Fungi. All rights reserved.</div>
-      <div><a href="https://www.hinterlandfungi.com" target="_blank" rel="noopener noreferrer">Back to main page</a></div>
+  <img src="IMG_1678.png" alt="Hinterland Fungi logo" class="footerLogo">
+  <div class="footerText">
+    <div>© 2026 Hinterland Fungi. All rights reserved.</div>
+    <div id="footerMainPageLink">
+      <a href="https://www.hinterlandfungi.com" target="_blank" rel="noopener noreferrer">Back to main page</a>
     </div>
+  </div>
+</div>
   </div>
 </div>
 
@@ -3497,6 +3500,13 @@ function updateInstallButtons() {
   }
 }
 
+function updateFooterVisibility() {
+  const footerLink = document.getElementById("footerMainPageLink");
+  if (!footerLink) return;
+
+  footerLink.style.display = isInStandaloneMode() ? "none" : "block";
+}
+
 async function handleInstallClick() {
   if (!deferredInstallPrompt) return;
 
@@ -3758,9 +3768,14 @@ window.addEventListener("beforeinstallprompt", (e) => {
   updateInstallButtons();
 });
 
-window.addEventListener("pageshow", updateInstallButtons);
+window.addEventListener("pageshow", () => {
+  updateInstallButtons();
+  updateFooterVisibility();
+});
+
 render();
 updateInstallButtons();
+updateFooterVisibility();
 </script>
 <script>
 if ("serviceWorker" in navigator) {

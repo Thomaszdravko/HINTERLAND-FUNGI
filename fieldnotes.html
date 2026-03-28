@@ -600,6 +600,9 @@
     text-align: right;
   }
 </style>
+
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#000000" />
 </head>
 
 <body>
@@ -3654,6 +3657,13 @@ window.addEventListener('keydown', function(event) {
 });
 
 render();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js");
+  });
+}
 </script>
 </body>
 </html>

@@ -639,8 +639,8 @@
 </div>
 
 <div class="startInstall">
-  <button class="btn secondary" id="installBtn" onclick="showInstallHelp()">Save to Home Screen</button>
-  <button class="btn secondary" id="iosInstallBtn" onclick="showIOSInstallModal()" style="display:none;">Download</button>
+  <button class="btn secondary" id="installBtn" onclick="handleInstallClick()" style="display:none;">Save to Home Screen</button>
+  <button class="btn secondary" id="iosInstallBtn" onclick="showIOSInstallModal()" style="display:none;">Save to Home Screen</button>
 </div>
   </div>
 </div>
@@ -3758,8 +3758,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
   updateInstallButtons();
 });
 
-updateInstallButtonVisibility();
-window.addEventListener("pageshow", updateInstallButtonVisibility);
+window.addEventListener("pageshow", updateInstallButtons);
 render();
 updateInstallButtons();
 </script>

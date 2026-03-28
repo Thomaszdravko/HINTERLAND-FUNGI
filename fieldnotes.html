@@ -365,6 +365,18 @@
     .modeBtns{ grid-template-columns: 1fr; }
   }
 
+	  .startInstall{
+    margin-top: 10px;
+  }
+
+  .installNote{
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.35;
+    text-align: center;
+  }
+	
   .paletteWrap{
     margin-top: 10px;
   }
@@ -618,12 +630,18 @@
     <div class="startWelcome">Welcome to Fungi Field Notes.</div>
     <div class="startHint">Choose your observation mode to begin.</div>
     <div class="modeBtns">
-      <button class="btn primary" onclick="begin('basic')">Basic Mode</button>
-      <button class="btn secondary" onclick="begin('advanced')">Advanced Mode</button>
-    </div>
-    <div class="startLearnMore">
-      <button class="btn secondary" onclick="showFieldNotesModal()">Learn More</button>
-    </div>
+  <button class="btn primary" onclick="begin('basic')">Basic Mode</button>
+  <button class="btn secondary" onclick="begin('advanced')">Advanced Mode</button>
+</div>
+
+<div class="startLearnMore">
+  <button class="btn secondary" onclick="showFieldNotesModal()">Learn More</button>
+</div>
+
+<div class="startInstall">
+  <button class="btn secondary" id="installBtn" onclick="handleInstallClick()" style="display:none;">Save to Home Screen</button>
+  <button class="btn secondary" id="iosInstallBtn" onclick="showIOSInstallModal()" style="display:none;">Download</button>
+</div>
   </div>
 </div>
 
@@ -664,6 +682,16 @@
     <p>You can also save Fungi Field Notes to your phone like an app for quick access in the field.</p>
     <p><strong>On iPhone or iPad:</strong> open it in Safari, tap the Share button, then choose Add to Home Screen.<br><strong>On Android:</strong> open it in Chrome, tap the menu, then choose Add to Home screen or Install app.</p>
     <p>Fungi Field Notes is currently in beta testing, and community feedback is very welcome. If you notice bugs, missing features, awkward wording, or have ideas for improvement, we would love to hear from you.</p>
+  </div>
+</div>
+
+<div id="ios-install-modal" class="modal">
+  <div class="terms-modal-content field-notes-modal-content">
+    <span class="close" onclick="closeIOSInstallModal()">&times;</span>
+    <h2>Save to Home Screen</h2>
+    <p>On iPhone or iPad, open this page in Safari.</p>
+    <p>Then tap the Share button and choose <strong>Add to Home Screen</strong>.</p>
+    <p>Once added, Fungi Field Notes will open like an app from your Home Screen.</p>
   </div>
 </div>
 
@@ -745,6 +773,7 @@ const safeTrim = (v) => (v || "").trim();
 const FORAY_STORAGE_KEY = "mushroom_foray_log_v3";
 
 let confirmCallback = null;
+let deferredInstallPrompt = null;
 
 const COLOURS = [
   {name:"Crimson", hex:"#7A1123"},
@@ -3438,6 +3467,60 @@ function copyAndOpenINat(){
   window.open("https://www.inaturalist.org/observations/new", "_blank");
 }
 
+function isIOS() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent)
+    || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+}
+
+function isInStandaloneMode() {
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function updateInstallButtons() {
+  const installBtn = document.getElementById("installBtn");
+  const iosInstallBtn = document.getElementById("iosInstallBtn");
+
+  if (!installBtn || !iosInstallBtn) return;
+
+  installBtn.style.display = "none";
+  iosInstallBtn.style.display = "none";
+
+  if (isInStandaloneMode()) return;
+
+  if (isIOS()) {
+    iosInstallBtn.style.display = "block";
+    return;
+  }
+
+  if (deferredInstallPrompt) {
+    installBtn.style.display = "block";
+  }
+}
+
+async function handleInstallClick() {
+  if (!deferredInstallPrompt) return;
+
+  deferredInstallPrompt.prompt();
+  await deferredInstallPrompt.userChoice;
+  deferredInstallPrompt = null;
+  updateInstallButtons();
+}
+
+function showIOSInstallModal() {
+  document.getElementById("ios-install-modal").style.display = "block";
+  document.body.style.overflow = "hidden";
+}
+
+function closeIOSInstallModal() {
+  document.getElementById("ios-install-modal").style.display = "none";
+  if (
+    document.getElementById("forayModal").style.display !== "block" &&
+    document.getElementById("field-notes-modal").style.display !== "block"
+  ) {
+    document.body.style.overflow = "";
+  }
+}
+
 /* =========================
    FORAY LOG
 ========================= */
@@ -3646,6 +3729,7 @@ document.getElementById("confirmOverlay").addEventListener("click", (e) => {
 window.onclick = function(event) {
   var fieldNotesModal = document.getElementById('field-notes-modal');
   var forayModal = document.getElementById('forayModal');
+  var iosInstallModal = document.getElementById('ios-install-modal');
 
   if (event.target === fieldNotesModal) {
     closeFieldNotesModal();
@@ -3654,16 +3738,33 @@ window.onclick = function(event) {
   if (event.target === forayModal) {
     closeForayLog();
   }
+
+  if (event.target === iosInstallModal) {
+    closeIOSInstallModal();
+  }
 };
 
 window.addEventListener('keydown', function(event) {
   if (event.key === 'Escape') {
     closeFieldNotesModal();
     closeForayLog();
+    closeIOSInstallModal();
   }
 });
 
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  updateInstallButtons();
+});
+
+window.addEventListener("appinstalled", () => {
+  deferredInstallPrompt = null;
+  updateInstallButtons();
+});
+
 render();
+updateInstallButtons();
 </script>
 <script>
 if ("serviceWorker" in navigator) {

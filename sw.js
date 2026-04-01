@@ -1,4 +1,4 @@
-const CACHE_NAME = "fungi-field-notes-v4";
+const CACHE_NAME = "fungi-field-notes-v5";
 
 const APP_SHELL = [
   "./",
